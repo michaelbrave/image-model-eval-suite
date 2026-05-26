@@ -67,6 +67,26 @@ image-model-eval run-comfy suites/core-75/suite.yaml \
   --out outputs/my-model/core-75
 ```
 
+Run the next untested model found in Stability Matrix's model directory:
+
+```bash
+scripts/run_models.sh --resolution-scale 0.5
+```
+
+Run every untested model sequentially:
+
+```bash
+scripts/run_models.sh --overnight --resolution-scale 0.5
+```
+
+For a quick smoke test:
+
+```bash
+scripts/run_models.sh --case-limit 3 --resolution-scale 0.5
+```
+
+The batch runner treats `outputs/<model-id>/<suite-id>/run.json` with all cases completed as already tested. Without `--overnight`, it runs one untested model and exits.
+
 Score generated images:
 
 ```bash
