@@ -1,0 +1,55 @@
+groups:
+  routed-default:
+    description: Domain-routed scorer set for core model characterization.
+    always:
+      - brightness-contrast
+    prompt_style_fit:
+      - image-reward
+    prompt_adherence:
+      - image-reward
+    routes:
+      - match:
+          domain: anime_cartoon
+        scorers:
+          - cafe-aesthetic
+          - image-reward
+      - match:
+          domain: illustration_painting
+        scorers:
+          - aesthetics-scorer
+          - improved-aesthetic-predictor
+      - match:
+          probes_any:
+            - painting
+            - watercolor
+            - ink
+            - storybook
+        scorers:
+          - improved-aesthetic-predictor
+          - aesthetics-scorer
+      - match:
+          subject: portrait
+        scorers:
+          - sd-chad
+          - improved-aesthetic-predictor
+      - match:
+          probes_any:
+            - face
+            - skin
+            - hair
+            - anime_face
+        scorers:
+          - sd-chad
+      - match:
+          domain: photography
+        scorers:
+          - improved-aesthetic-predictor
+          - sd-chad
+      - match:
+          domain: cgi_render
+        scorers:
+          - improved-aesthetic-predictor
+      - match:
+          domain: mixed_general
+        scorers:
+          - improved-aesthetic-predictor
