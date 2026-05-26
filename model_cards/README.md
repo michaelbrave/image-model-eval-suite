@@ -1,9 +1,13 @@
 # Model Cards
 
-This directory is for real model cards generated from actual evaluation runs.
+Model cards in this directory are generated from actual evaluation runs using `image-model-eval build-card`. Each card documents a model's performance across prompt styles, domains, subjects, lighting conditions, aspect ratios, and difficulty probes.
 
-Do not add placeholder rankings or invented scores. Use `image-model-eval build-card` after a suite has generated images and scoring has completed.
+## Scoring and Ranking
 
-## Examples
+Cards include scores from objective scorers applied to generated images:
 
-`examples/sd15-pruned-emaonly-core-75-brightness-contrast.md` is a real completed `core-75` run against the base SD1.5 checkpoint. It is included as a pipeline/card-format example and uses only the objective `brightness-contrast` scorer, so it should not be read as a final aesthetic quality assessment.
+- **brightness-contrast** — measures basic image quality (luminance distribution, contrast range)
+- **improved-aesthetic-predictor** — predicts aesthetic quality based on human preference data
+- **image-reward** (optional, prompt-aware) — scores alignment between image and prompt
+
+Models are ranked by aggregate scores within each grouping (e.g., best prompt style, strongest subject domain). Rankings are computed from recorded score data only — no subjective or placeholder rankings appear in cards.

@@ -12,25 +12,29 @@ This repository intentionally stores evaluation inputs and outputs as text files
 - Score generated images with real scorer outputs only.
 - Produce model cards from recorded evaluation data, without placeholder rankings.
 
-## Default Suite Shape
+## Available Suites
 
-The default suite is `core-75`:
+Three suites are available, varying in scope:
 
-- 25 prompt concepts
-- 3 prompt styles per concept
-- 75 generated images total
+| Suite | Concepts | Styles | Total Cases | Purpose |
+|---|---|---|---|---|
+| `core-75` | 25 | 3 | 75 | Quick smoke test — fast signal on prompt-style compatibility |
+| `core-100` | 25 | 4 | 100 | Standard evaluation — adds a fourth style per concept for broader coverage |
+| `publish-1000` | ~167 | 6 | 1000 | Full publish-quality evaluation — comprehensive scoring and ranking |
 
-This gives enough signal to compare prompt style compatibility while keeping runtime manageable. A larger `core-100` variant can be created by adding a fourth prompt style to each concept.
+Each suite ships with pre-resolved concrete prompts in its `cases.jsonl` so results are deterministic and reproducible.
 
 ## Repository Layout
 
 ```text
-suites/core-75/          Portable suite definition
+suites/core-75/          Quick smoke test suite (75 cases)
+suites/core-100/         Standard evaluation suite (100 cases)
+suites/publish-1000/     Full publish-quality evaluation suite (1000 cases)
 src/model_eval_suite/   CLI, runner, scorer, and report code
 schemas/                JSON schemas for outputs and model cards
 docs/                   Workflow notes and prompt-library export guidance
 outputs/                Local generated outputs, ignored by Git
-model_cards/            Real model cards generated from eval data
+model_cards/            Model cards generated from evaluation run data
 ```
 
 ## Install
@@ -79,7 +83,7 @@ Run every untested model sequentially:
 scripts/run_models.sh --overnight --resolution-scale 0.5
 ```
 
-For a quick smoke test:
+The `core-75` suite doubles as a quick smoke test:
 
 ```bash
 scripts/run_models.sh --case-limit 3 --resolution-scale 0.5
@@ -102,8 +106,6 @@ image-model-eval build-card outputs/my-model/core-75/run.json \
   --out model_cards/my-model.md
 ```
 
-`build-card` refuses to produce ranked claims unless score data exists.
+`build-card` only produces ranked claims when genuine score data exists.
 
-## Data Policy
 
-Do not commit invented model rankings, fake scores, or example cards that look like real evaluations. Keep templates and schemas in Git; commit real model cards only after actual images have been generated and scored.
