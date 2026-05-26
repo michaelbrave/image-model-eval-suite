@@ -1,0 +1,31 @@
+id: core-75
+version: 1
+name: Core 75 Model Characterization Suite
+description: 25 concepts rendered with 3 prompt styles each to measure prompt-style fit and broad model strengths.
+concepts: concepts.yaml
+styles: styles.yaml
+case_policy:
+  expand: all_concepts_x_styles
+  image_seed_start: 410000
+  wildcard_seed_start: 510000
+  default_width: 1024
+  default_height: 1024
+  aspect_ratios:
+    square: [1024, 1024]
+    portrait: [832, 1216]
+    landscape: [1216, 832]
+    wide: [1344, 768]
+    tall: [768, 1344]
+scoring:
+  recommended:
+    - brightness-contrast
+    - improved-aesthetic-predictor
+  optional_prompt_aware:
+    - image-reward
+aggregation:
+  primary_groupings:
+    - domain
+    - subject
+    - prompt_style
+    - probes
+    - aspect_ratio
