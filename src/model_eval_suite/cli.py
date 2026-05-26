@@ -32,6 +32,8 @@ def _cmd_render_plan(args: argparse.Namespace) -> None:
 def _cmd_run_comfy(args: argparse.Namespace) -> None:
     suite = load_suite(args.suite)
     cases = expand_cases(suite)
+    if args.case_limit is not None:
+        cases = cases[: args.case_limit]
     out_dir = Path(args.out)
     images_dir = out_dir / "images"
     images_dir.mkdir(parents=True, exist_ok=True)
@@ -47,6 +49,7 @@ def _cmd_run_comfy(args: argparse.Namespace) -> None:
             "sampler": args.sampler,
             "scheduler": args.scheduler,
             "comfy_url": args.comfy_url,
+            "case_limit": args.case_limit,
         },
         "cases": [],
     }
@@ -144,6 +147,7 @@ def build_parser() -> argparse.ArgumentParser:
     run.add_argument("--sampler", default="euler")
     run.add_argument("--scheduler", default="normal")
     run.add_argument("--timeout", type=int, default=600)
+    run.add_argument("--case-limit", type=int, default=None, help="Run only the first N expanded cases")
     run.set_defaults(func=_cmd_run_comfy)
 
     score = sub.add_parser("score-run", help="Score completed images in a run JSON")
