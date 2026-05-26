@@ -1,0 +1,36 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Image Model Eval Run",
+  "type": "object",
+  "required": ["suite_id", "suite_version", "model", "generation", "cases"],
+  "properties": {
+    "suite_id": {"type": "string"},
+    "suite_version": {"type": "integer"},
+    "model": {
+      "type": "object",
+      "required": ["model_id", "checkpoint"],
+      "properties": {
+        "model_id": {"type": "string"},
+        "checkpoint": {"type": "string"}
+      }
+    },
+    "generation": {"type": "object"},
+    "cases": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["case_id", "concept_id", "style_id", "domain", "subject", "status"],
+        "properties": {
+          "case_id": {"type": "string"},
+          "concept_id": {"type": "string"},
+          "style_id": {"type": "string"},
+          "domain": {"type": "string"},
+          "subject": {"type": "string"},
+          "status": {"enum": ["queued", "completed", "failed"]},
+          "image_path": {"type": "string"},
+          "scores": {"type": "array"}
+        }
+      }
+    }
+  }
+}
