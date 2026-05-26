@@ -29,6 +29,11 @@ def _cmd_render_plan(args: argparse.Namespace) -> None:
     print(json.dumps({"suite_id": suite.suite_id, "cases": len(cases), "out": str(out)}, indent=2))
 
 
+def _scaled_dimension(value: int, scale: float) -> int:
+    scaled = max(64, int(round(value * scale / 8) * 8))
+    return scaled
+
+
 def _cmd_run_comfy(args: argparse.Namespace) -> None:
     suite = load_suite(args.suite)
     cases = expand_cases(suite)
@@ -50,19 +55,22 @@ def _cmd_run_comfy(args: argparse.Namespace) -> None:
             "scheduler": args.scheduler,
             "comfy_url": args.comfy_url,
             "case_limit": args.case_limit,
+            "resolution_scale": args.resolution_scale,
         },
         "cases": [],
     }
 
     for index, case in enumerate(cases, start=1):
+        width = _scaled_dimension(case.width, args.resolution_scale)
+        height = _scaled_dimension(case.height, args.resolution_scale)
         prefix = f"{args.model_id}_{suite.suite_id}_{case.case_id}"
         workflow = build_basic_workflow(
             checkpoint=args.checkpoint,
             positive=case.positive_prompt,
             negative=case.negative_prompt,
             seed=case.image_seed,
-            width=case.width,
-            height=case.height,
+            width=width,
+            height=height,
             steps=args.steps,
             cfg=args.cfg,
             sampler=args.sampler,
@@ -70,6 +78,8 @@ def _cmd_run_comfy(args: argparse.Namespace) -> None:
             filename_prefix=prefix,
         )
         record = case.to_json()
+        record["generated_width"] = width
+        record["generated_height"] = height
         record["status"] = "queued"
         try:
             queued = client.queue_prompt(workflow)
@@ -148,6 +158,7 @@ def build_parser() -> argparse.ArgumentParser:
     run.add_argument("--scheduler", default="normal")
     run.add_argument("--timeout", type=int, default=600)
     run.add_argument("--case-limit", type=int, default=None, help="Run only the first N expanded cases")
+    run.add_argument("--resolution-scale", type=float, default=1.0, help="Scale suite dimensions, e.g. 0.5 for SD1.5")
     run.set_defaults(func=_cmd_run_comfy)
 
     score = sub.add_parser("score-run", help="Score completed images in a run JSON")
