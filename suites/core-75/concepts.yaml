@@ -1,0 +1,275 @@
+concepts:
+  - id: photo_portrait_lowkey
+    domain: photography
+    subject: portrait
+    aspect_ratio: square
+    probes: [low_key, face, skin, shallow_depth_of_field]
+    difficulty: medium
+    concept: low-key studio portrait of an older jazz musician holding a brass saxophone
+    details: realistic skin texture, expressive eyes, worn velvet jacket, brass reflections
+    lighting: controlled low-key studio lighting with a narrow rim light and soft fill
+    composition: tight three-quarter portrait, 85mm lens look, shallow depth of field
+
+  - id: photo_portrait_highkey
+    domain: photography
+    subject: portrait
+    aspect_ratio: portrait
+    probes: [high_key, face, hair, fabric]
+    difficulty: medium
+    concept: high-key fashion portrait of a model in a white tailored coat
+    details: natural makeup, crisp fabric texture, clean white background
+    lighting: bright diffused studio light with gentle shadows
+    composition: vertical half-body portrait, centered editorial framing
+
+  - id: street_photo_rain_night
+    domain: photography
+    subject: urban_scene
+    aspect_ratio: landscape
+    probes: [night_scene, reflections, motion, neon]
+    difficulty: hard
+    concept: candid rainy night street photograph at a neon-lit crosswalk
+    details: wet pavement reflections, umbrellas, passing taxi, layered pedestrians
+    lighting: neon signs, traffic lights, reflected highlights on rain-slick asphalt
+    composition: wide street-level documentary framing with natural motion blur
+
+  - id: documentary_market
+    domain: photography
+    subject: people_scene
+    aspect_ratio: landscape
+    probes: [multi_subject, color, clutter]
+    difficulty: hard
+    concept: documentary photograph of a busy open-air spice market
+    details: vendors, baskets of spices, hand-painted signs, shoppers negotiating
+    lighting: warm morning sunlight filtered through canvas awnings
+    composition: medium-wide environmental scene with clear foreground and background layers
+
+  - id: macro_product_watch
+    domain: photography
+    subject: product
+    aspect_ratio: square
+    probes: [macro, metal, glass, text_detail]
+    difficulty: hard
+    concept: macro product photograph of a mechanical wristwatch on dark stone
+    details: brushed steel case, sapphire glass, visible gears, readable dial markings
+    lighting: precise strip reflections and controlled specular highlights
+    composition: close macro three-quarter angle with shallow depth of field
+
+  - id: anime_hero_rooftop
+    domain: anime_cartoon
+    subject: character
+    aspect_ratio: portrait
+    probes: [anime_face, dynamic_pose, night_scene]
+    difficulty: medium
+    concept: anime heroine standing on a rooftop above a glowing city
+    details: windblown jacket, confident expression, stylized hair, city lights below
+    lighting: moonlight and colorful city glow with crisp cel-shaded highlights
+    composition: vertical heroic low-angle framing with strong silhouette
+
+  - id: anime_slice_of_life_cafe
+    domain: anime_cartoon
+    subject: interior
+    aspect_ratio: landscape
+    probes: [anime_style, interior, warm_light]
+    difficulty: medium
+    concept: cozy anime cafe scene with two friends sharing dessert at a window table
+    details: pastries, tea cups, plants, gentle expressions, detailed background props
+    lighting: soft afternoon window light with warm interior accents
+    composition: medium-wide conversational framing with balanced character placement
+
+  - id: anime_mecha_hangar
+    domain: anime_cartoon
+    subject: vehicle
+    aspect_ratio: wide
+    probes: [mecha, hard_surface, scale, text_detail]
+    difficulty: hard
+    concept: anime mecha being repaired inside a futuristic hangar
+    details: mechanics, scaffolding, armor panels, warning decals, glowing diagnostics
+    lighting: cool overhead industrial lights and orange welding sparks
+    composition: wide cinematic hangar view emphasizing scale and readable machinery
+
+  - id: cartoon_creature_forest
+    domain: anime_cartoon
+    subject: creature
+    aspect_ratio: square
+    probes: [cute_character, forest, color]
+    difficulty: easy
+    concept: charming cartoon forest creature carrying a tiny lantern
+    details: oversized ears, mossy fur, mushrooms, fireflies, friendly expression
+    lighting: soft twilight glow from the lantern and fireflies
+    composition: centered storybook framing with clear silhouette
+
+  - id: manga_action_panel
+    domain: anime_cartoon
+    subject: action
+    aspect_ratio: tall
+    probes: [line_art, motion, hands, perspective]
+    difficulty: hard
+    concept: black-and-white manga action panel of a swordsman leaping forward
+    details: speed lines, dramatic cloak, intense eyes, readable sword pose
+    lighting: stark ink contrast with bold shadows
+    composition: tall dynamic perspective with foreshortening and clean line work
+
+  - id: oil_painting_harbor
+    domain: illustration_painting
+    subject: landscape
+    aspect_ratio: landscape
+    probes: [painting, water, golden_hour]
+    difficulty: medium
+    concept: oil painting of a quiet harbor at golden hour
+    details: small fishing boats, textured clouds, rippling water, distant village
+    lighting: warm sunset light with glowing reflections
+    composition: classic landscape composition with foreground boats and distant horizon
+
+  - id: watercolor_botanical
+    domain: illustration_painting
+    subject: botanical
+    aspect_ratio: portrait
+    probes: [watercolor, delicate_detail, white_background]
+    difficulty: medium
+    concept: watercolor botanical illustration of wildflowers and fern leaves
+    details: translucent washes, fine ink outlines, varied petals, natural imperfections
+    lighting: clean paper-white background with gentle tonal variation
+    composition: vertical scientific plate layout with balanced negative space
+
+  - id: fantasy_character_painting
+    domain: illustration_painting
+    subject: character
+    aspect_ratio: portrait
+    probes: [fantasy, armor, hands, materials]
+    difficulty: hard
+    concept: painterly fantasy portrait of a weathered knight holding a cracked helm
+    details: scarred face, engraved armor, worn leather gloves, atmospheric background
+    lighting: dramatic side light with muted painterly color palette
+    composition: vertical chest-up portrait with hands and helmet visible
+
+  - id: childrens_book_scene
+    domain: illustration_painting
+    subject: narrative_scene
+    aspect_ratio: landscape
+    probes: [storybook, emotion, animals, warm_light]
+    difficulty: medium
+    concept: children's book illustration of a child discovering a secret garden gate
+    details: overgrown flowers, old key, curious expression, whimsical details
+    lighting: soft morning light through leaves
+    composition: inviting landscape frame with the gate as focal point
+
+  - id: ink_architecture
+    domain: illustration_painting
+    subject: architecture
+    aspect_ratio: square
+    probes: [ink, perspective, architecture]
+    difficulty: hard
+    concept: detailed ink illustration of a narrow old city alley with balconies
+    details: stone walls, laundry lines, potted plants, uneven stairs, tiny shop signs
+    lighting: high-contrast sunlight and shadow pattern
+    composition: one-point perspective down the alley with dense line detail
+
+  - id: cgi_product_headphones
+    domain: cgi_render
+    subject: product
+    aspect_ratio: square
+    probes: [product, plastic, metal, studio]
+    difficulty: medium
+    concept: high-end wireless headphones floating above a matte pedestal
+    details: black satin plastic, brushed aluminum, soft ear cushions, subtle logo area
+    lighting: clean product-render lighting with controlled reflections
+    composition: centered three-quarter product render on neutral background
+
+  - id: cgi_scifi_corridor
+    domain: cgi_render
+    subject: architecture
+    aspect_ratio: wide
+    probes: [hard_surface, perspective, emissive_light]
+    difficulty: hard
+    concept: cinematic 3D render of a futuristic spaceship corridor
+    details: modular wall panels, cables, floor grates, small warning labels, distant door
+    lighting: blue-white strip lights and red emergency accents
+    composition: wide symmetrical perspective with strong depth
+
+  - id: cgi_isometric_room
+    domain: cgi_render
+    subject: interior
+    aspect_ratio: square
+    probes: [isometric, furniture, small_objects]
+    difficulty: medium
+    concept: isometric 3D render of a compact artist studio apartment
+    details: desk, easel, shelves, plants, bed loft, scattered art supplies
+    lighting: soft daylight from one window with ambient interior bounce
+    composition: clean isometric cutaway view with readable object placement
+
+  - id: cgi_vehicle_desert
+    domain: cgi_render
+    subject: vehicle
+    aspect_ratio: landscape
+    probes: [vehicle, dust, materials, motion]
+    difficulty: hard
+    concept: rugged electric off-road vehicle crossing a desert salt flat
+    details: dust plume, matte body panels, large tires, roof equipment, distant mountains
+    lighting: harsh late-afternoon sun with long shadows
+    composition: low wide tracking shot with strong sense of speed
+
+  - id: cgi_food_ad
+    domain: cgi_render
+    subject: food
+    aspect_ratio: portrait
+    probes: [food, liquid, gloss, advertising]
+    difficulty: medium
+    concept: glossy advertising render of a citrus soda can splashing through ice
+    details: condensation, orange slices, ice cubes, droplets, clean brand-free can
+    lighting: bright commercial backlight with sparkling highlights
+    composition: vertical product-ad framing with the can as central hero object
+
+  - id: landscape_mountain_storm
+    domain: mixed_general
+    subject: landscape
+    aspect_ratio: landscape
+    probes: [storm, atmosphere, scale]
+    difficulty: medium
+    concept: vast alpine valley under an approaching thunderstorm
+    details: snow peaks, dark clouds, winding river, tiny cabin, windblown grass
+    lighting: dramatic storm light with sun breaking through clouds
+    composition: wide landscape with strong depth and clear scale cues
+
+  - id: architecture_modern_museum
+    domain: mixed_general
+    subject: architecture
+    aspect_ratio: wide
+    probes: [architecture, glass, reflections, people_scale]
+    difficulty: hard
+    concept: modern glass museum atrium with visitors walking across polished floors
+    details: curved glass roof, concrete columns, reflections, signage, small groups of people
+    lighting: bright natural daylight diffused through glass
+    composition: wide architectural interior with clean perspective lines
+
+  - id: typography_poster
+    domain: mixed_general
+    subject: graphic_design
+    aspect_ratio: portrait
+    probes: [text_detail, poster, layout]
+    difficulty: hard
+    concept: clean concert poster for a fictional jazz festival titled BLUE HOUR
+    details: bold readable title text, date area, abstract saxophone shape, limited colors
+    lighting: flat graphic design with print texture
+    composition: vertical poster layout with strong hierarchy and balanced margins
+
+  - id: hands_ceramic_craft
+    domain: mixed_general
+    subject: hands
+    aspect_ratio: square
+    probes: [hands, clay, craft, closeup]
+    difficulty: hard
+    concept: close-up of artisan hands shaping a ceramic bowl on a spinning wheel
+    details: wet clay, fingers pressing the rim, apron texture, pottery studio background
+    lighting: soft side window light with natural shadows
+    composition: tight close-up focused on hands and circular motion
+
+  - id: surreal_library
+    domain: mixed_general
+    subject: surreal_scene
+    aspect_ratio: tall
+    probes: [surreal, books, impossible_space, lighting]
+    difficulty: hard
+    concept: surreal vertical library where staircases fold into impossible directions
+    details: endless shelves, floating books, tiny reading lamps, distant doorway
+    lighting: warm pools of lamplight fading into cool shadows
+    composition: tall vertigo-inducing perspective with coherent focal path
