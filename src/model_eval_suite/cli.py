@@ -7,6 +7,7 @@ from typing import Any
 
 from .comfyui import ComfyUIClient, build_basic_workflow, first_image_ref
 from .report import write_card
+from .routing import load_scorer_groups, scorers_for_case
 from .scorers import load_run, make_scorer, write_run
 from .suite import expand_cases, load_suite, validate_suite, write_jsonl
 
@@ -107,25 +108,59 @@ def _cmd_run_comfy(args: argparse.Namespace) -> None:
     print(json.dumps({"run": str(out_dir / "run.json"), "cases": len(run["cases"])}, indent=2))
 
 
+def _scorer_names_for_case(args: argparse.Namespace, case: dict[str, Any], group: dict[str, Any] | None) -> list[str]:
+    names: list[str] = []
+    if args.scorer:
+        names.extend(args.scorer)
+    if group is not None:
+        names.extend(scorers_for_case(case, group))
+    deduped: list[str] = []
+    for name in names:
+        if name not in deduped:
+            deduped.append(name)
+    return deduped
+
+
 def _cmd_score_run(args: argparse.Namespace) -> None:
     run_path = Path(args.run_json)
     run = load_run(run_path)
-    scorers = [make_scorer(name, weight_path=args.weight_path) for name in args.scorer]
+    group = None
+    if args.scorer_group:
+        groups = load_scorer_groups(args.scorer_groups_file)
+        if args.scorer_group not in groups:
+            raise KeyError(f"Unknown scorer group: {args.scorer_group}")
+        group = groups[args.scorer_group]
+        run.setdefault("scoring", {})["scorer_group"] = args.scorer_group
+        run["scoring"]["scorer_groups_file"] = args.scorer_groups_file
+    scorer_cache: dict[str, Any] = {}
     scored = 0
+    failures: list[dict[str, str]] = []
     for case in run.get("cases", []):
         if case.get("status") != "completed" or not case.get("image_path"):
             continue
         image_path = Path(case["image_path"])
         case.setdefault("scores", [])
         existing = {score.get("scorer_name") for score in case["scores"]}
-        for scorer in scorers:
-            if scorer.name in existing and not args.rescore:
+        for name in _scorer_names_for_case(args, case, group):
+            if name in existing and not args.rescore:
                 continue
-            result = scorer.score(image_path, prompt=case.get("positive_prompt"), style_hint=case.get("style_id"))
-            case["scores"].append(result.to_json())
-            scored += 1
+            try:
+                scorer = scorer_cache.setdefault(name, make_scorer(name, weight_path=args.weight_path))
+                result = scorer.score(image_path, prompt=case.get("positive_prompt"), style_hint=case.get("style_id"))
+                payload = result.to_json()
+                if group is not None:
+                    payload.setdefault("metadata", {})["scorer_group"] = args.scorer_group
+                case["scores"].append(payload)
+                scored += 1
+            except Exception as exc:  # noqa: BLE001 - keep scoring batch moving
+                failures.append({"case_id": case.get("case_id", ""), "scorer": name, "error": str(exc)})
+                if not args.keep_going:
+                    write_run(run_path, run)
+                    raise
+    if failures:
+        run.setdefault("scoring", {})["failures"] = failures
     write_run(run_path, run)
-    print(json.dumps({"run": str(run_path), "new_scores": scored}, indent=2))
+    print(json.dumps({"run": str(run_path), "new_scores": scored, "failures": len(failures)}, indent=2))
 
 
 def _cmd_build_card(args: argparse.Namespace) -> None:
@@ -163,9 +198,12 @@ def build_parser() -> argparse.ArgumentParser:
 
     score = sub.add_parser("score-run", help="Score completed images in a run JSON")
     score.add_argument("run_json")
-    score.add_argument("--scorer", action="append", required=True)
-    score.add_argument("--weight-path", default=None, help="Weights for improved-aesthetic-predictor")
+    score.add_argument("--scorer", action="append", default=[])
+    score.add_argument("--scorer-group", default=None, help="Named scorer group from scorer_groups.yaml")
+    score.add_argument("--scorer-groups-file", default="scorer_groups.yaml")
+    score.add_argument("--weight-path", default=None, help="Override weights for improved-aesthetic-predictor")
     score.add_argument("--rescore", action="store_true")
+    score.add_argument("--keep-going", action="store_true", help="Record scorer failures and continue")
     score.set_defaults(func=_cmd_score_run)
 
     card = sub.add_parser("build-card", help="Build a model card from real scored run data")
