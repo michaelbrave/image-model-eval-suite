@@ -1,0 +1,18 @@
+styles:
+  - id: natural_descriptive
+    family: general
+    description: Plain descriptive natural language with minimal syntax tricks.
+    positive_template: "{concept}. {details}. {lighting}. {composition}."
+    negative_template: "low quality, blurry, distorted, malformed anatomy, extra limbs, text artifacts, watermark"
+
+  - id: cinematic_structured
+    family: photography_general
+    description: Camera/composition/lighting-forward prompt useful for photo and realistic models.
+    positive_template: "{concept}, {details}, {composition}, {lighting}, precise materials, coherent scene, high detail, professional image quality"
+    negative_template: "anime, cartoon, sketch, painterly, low quality, blurry, distorted hands, broken perspective, watermark"
+
+  - id: sdxl_tagged
+    family: tag_weighted
+    description: Concise comma-separated SDXL-style syntax for models that prefer tag-like prompting.
+    positive_template: "{concept}, {details}, {lighting}, {composition}, high quality, detailed, sharp focus"
+    negative_template: "low quality, worst quality, blurry, jpeg artifacts, bad anatomy, extra fingers, text, watermark"
