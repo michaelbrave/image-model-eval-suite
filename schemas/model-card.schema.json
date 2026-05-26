@@ -1,0 +1,13 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Image Model Eval Card Metadata",
+  "type": "object",
+  "required": ["model_id", "suite_id", "run_json", "generated_from_real_scores"],
+  "properties": {
+    "model_id": {"type": "string"},
+    "suite_id": {"type": "string"},
+    "run_json": {"type": "string"},
+    "generated_from_real_scores": {"const": true},
+    "notes": {"type": "string"}
+  }
+}
