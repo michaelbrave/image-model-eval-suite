@@ -17,6 +17,14 @@ def _ranked_means(groups: dict[str, list[float]]) -> dict[str, float | None]:
     return {key: _mean(value) for key, value in sorted(groups.items())}
 
 
+def _ranked_desc(items: dict[str, float | None]) -> list[tuple[str, float]]:
+    return sorted(
+        [(k, v) for k, v in items.items() if v is not None],
+        key=lambda x: x[1],
+        reverse=True,
+    )
+
+
 def _case_kind_value(case: dict[str, Any], score_kind: str) -> float | None:
     values: list[float] = []
     for score in case.get("scores", []):
@@ -28,6 +36,44 @@ def _case_kind_value(case: dict[str, Any], score_kind: str) -> float | None:
     return _mean(values)
 
 
+def _contrast_leaning(brightness_values: list[float]) -> str:
+    if not brightness_values:
+        return "unknown"
+    avg = sum(brightness_values) / len(brightness_values)
+    if avg < 0.35:
+        return "dark"
+    if avg > 0.65:
+        return "light"
+    return "balanced"
+
+
+def _compute_speciality(summary: dict[str, Any]) -> dict[str, str]:
+    speciality: dict[str, str] = {}
+    for kind, domains in summary.get("domain_scores", {}).items():
+        ranked = _ranked_desc(domains)
+        if ranked:
+            speciality[kind] = ranked[0][0]
+    return speciality
+
+
+def _compute_resolution_pref(summary: dict[str, Any], run: dict[str, Any]) -> dict[str, str]:
+    aspect_scores: dict[str, dict[str, list[float]]] = defaultdict(lambda: defaultdict(list))
+    for case in run.get("cases", []):
+        ar = case.get("aspect_ratio", "")
+        for score in case.get("scores", []):
+            kind = str(score.get("score_kind", "unknown"))
+            val = score.get("normalized_score")
+            if isinstance(val, (int, float)):
+                aspect_scores[kind][ar].append(float(val))
+    result: dict[str, str] = {}
+    for kind, groups in aspect_scores.items():
+        means = {ar: sum(vals) / len(vals) for ar, vals in groups.items()}
+        ranked = sorted(means.items(), key=lambda x: x[1], reverse=True)
+        if ranked:
+            result[kind] = ranked[0][0]
+    return result
+
+
 def summarize_run(run: dict[str, Any]) -> dict[str, Any]:
     cases = run.get("cases", [])
     style_scores: dict[str, dict[str, list[float]]] = defaultdict(lambda: defaultdict(list))
@@ -36,6 +82,7 @@ def summarize_run(run: dict[str, Any]) -> dict[str, Any]:
     scorer_scores: dict[str, list[float]] = defaultdict(list)
     score_kind_scores: dict[str, list[float]] = defaultdict(list)
     score_counts: dict[str, int] = defaultdict(int)
+    brightness_values: list[float] = []
 
     for case in cases:
         scores = case.get("scores", [])
@@ -51,6 +98,11 @@ def summarize_run(run: dict[str, Any]) -> dict[str, Any]:
             score_kind_scores[score_kind].append(numeric)
             scorer_scores[scorer_name].append(numeric)
             score_kinds.add(score_kind)
+
+            md = score.get("metadata", {})
+            bv = md.get("brightness_mean_0_1") if isinstance(md, dict) else None
+            if isinstance(bv, (int, float)):
+                brightness_values.append(float(bv))
 
         for score_kind in score_kinds:
             value = _case_kind_value(case, score_kind)
@@ -70,6 +122,8 @@ def summarize_run(run: dict[str, Any]) -> dict[str, Any]:
         "style_scores": {kind: _ranked_means(values) for kind, values in sorted(style_scores.items())},
         "domain_scores": {kind: _ranked_means(values) for kind, values in sorted(domain_scores.items())},
         "probe_scores": {kind: _ranked_means(values) for kind, values in sorted(probe_scores.items())},
+        "contrast_leaning": _contrast_leaning(brightness_values),
+        "avg_brightness": (sum(brightness_values) / len(brightness_values)) if brightness_values else None,
     }
 
 
@@ -87,7 +141,62 @@ def _append_grouped_scores(lines: list[str], grouped: dict[str, dict[str, float 
         _append_score_table(lines, scores, limit=limit)
 
 
-def build_markdown_card(run: dict[str, Any]) -> str:
+def _section_model_profile(lines: list[str], summary: dict[str, Any], run: dict[str, Any], preferred_style: dict[str, str] | None = None) -> None:
+    lines.extend(["", "## Model Profile", ""])
+
+    # Domain Speciality
+    speciality = _compute_speciality(summary)
+    if speciality:
+        lines.append("### Domain Speciality")
+        lines.append("")
+        for kind, domain in sorted(speciality.items()):
+            lines.append(f"- `{kind}`: best at `{domain}`")
+        lines.append("")
+        # Show domain ranking for primary score kind
+        primary_kind = next(iter(speciality))
+        domain_ranking = _ranked_desc(summary.get("domain_scores", {}).get(primary_kind, {}))
+        if domain_ranking:
+            lines.append(f"Domain ranking ({primary_kind}):")
+            for domain, score in domain_ranking:
+                lines.append(f"  - `{domain}`: {score:.4f}")
+        lines.append("")
+
+    # Contrast Leaning
+    leaning = summary.get("contrast_leaning", "unknown")
+    avg_brightness = summary.get("avg_brightness")
+    if avg_brightness is not None:
+        lines.append(f"### Contrast Leaning")
+        lines.append("")
+        lines.append(f"The model leans **{leaning}** (avg brightness: {avg_brightness:.3f}/1.0).")
+        lines.append("")
+
+    # Optimal Resolution
+    res_pref = _compute_resolution_pref(summary, run)
+    if res_pref:
+        aspect_dimensions: dict[str, str] = {
+            "square": "1024×1024",
+            "portrait": "832×1216",
+            "landscape": "1216×832",
+            "wide": "1344×768",
+            "tall": "768×1344",
+        }
+        lines.append("### Optimal Resolution")
+        lines.append("")
+        for kind, ar in sorted(res_pref.items()):
+            dims = aspect_dimensions.get(ar, ar)
+            lines.append(f"- `{kind}`: best at `{ar}` ({dims})")
+        lines.append("")
+
+    # Preferred Style
+    if preferred_style:
+        lines.append("### Preferred Prompt Style")
+        lines.append("")
+        for kind, style in sorted(preferred_style.items()):
+            lines.append(f"- `{kind}`: `{style}`")
+        lines.append("")
+
+
+def build_markdown_card(run: dict[str, Any], preferred_style: dict[str, str] | None = None) -> str:
     summary = summarize_run(run)
     if summary["scored_case_count"] == 0:
         raise ValueError("Cannot build model card rankings without real score data")
@@ -100,10 +209,11 @@ def build_markdown_card(run: dict[str, Any]) -> str:
         f"Checkpoint: `{model.get('checkpoint', '')}`",
         f"Cases: {summary['case_count']}",
         f"Scored cases: {summary['scored_case_count']}",
-        "",
-        "## Score Counts",
-        "",
     ]
+
+    _section_model_profile(lines, summary, run, preferred_style)
+
+    lines.extend(["", "## Score Counts", ""])
     for key, value in summary["score_counts"].items():
         lines.append(f"- `{key}`: {value}")
 
@@ -127,11 +237,13 @@ def build_markdown_card(run: dict[str, Any]) -> str:
         "## Notes",
         "",
         "This card was generated from recorded scorer outputs. Score families are kept separate because aesthetic, prompt reward, classifier, and technical image-stat scores are not interchangeable.",
+        "",
+        "**Speciality**: the domain(s) where this model scores highest. **Contrast leaning** measures whether images tend toward light, dark, or balanced exposure. **Optimal resolution** is the aspect ratio that yields the best scores. **Preferred prompt style** is determined via a separate style-find test run.",
     ])
     return "\n".join(lines) + "\n"
 
 
-def write_card(run_path: Path, out_path: Path) -> None:
+def write_card(run_path: Path, out_path: Path, preferred_style: dict[str, str] | None = None) -> None:
     run = json.loads(run_path.read_text(encoding="utf-8"))
     out_path.parent.mkdir(parents=True, exist_ok=True)
-    out_path.write_text(build_markdown_card(run), encoding="utf-8")
+    out_path.write_text(build_markdown_card(run, preferred_style=preferred_style), encoding="utf-8")

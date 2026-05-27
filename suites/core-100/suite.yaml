@@ -1,0 +1,37 @@
+id: core-100
+version: 1
+name: Core 100 Model Evaluation Suite
+description: 100 pre-resolved concrete prompts from eval-core-100 (supplemented from
+  publish-curated-styles-1000) with 6 style variations and 4 seed variants each.
+case_policy:
+  cases_file: cases.jsonl
+  seed_variants: 4
+  aspect_ratios:
+    square:
+    - 1024
+    - 1024
+    portrait:
+    - 832
+    - 1216
+    landscape:
+    - 1216
+    - 832
+    wide:
+    - 1344
+    - 768
+    tall:
+    - 768
+    - 1344
+scoring:
+  recommended:
+  - brightness-contrast
+  - improved-aesthetic-predictor
+  optional_prompt_aware:
+  - image-reward
+aggregation:
+  primary_groupings:
+  - domain
+  - subject
+  - prompt_style
+  - probes
+  - aspect_ratio

@@ -16,10 +16,10 @@ class Concept:
     aspect_ratio: str
     probes: list[str]
     difficulty: str
-    concept: str
-    details: str
-    lighting: str
-    composition: str
+    concept: str = ""
+    details: str = ""
+    lighting: str = ""
+    composition: str = ""
 
 
 @dataclass(frozen=True)
@@ -29,6 +29,15 @@ class PromptStyle:
     description: str
     positive_template: str
     negative_template: str
+
+
+ASPECT_DIMENSIONS: dict[str, tuple[int, int]] = {
+    "square": (1024, 1024),
+    "portrait": (832, 1216),
+    "landscape": (1216, 832),
+    "wide": (1344, 768),
+    "tall": (768, 1344),
+}
 
 
 @dataclass(frozen=True)
@@ -41,12 +50,25 @@ class EvalCase:
     probes: list[str]
     difficulty: str
     aspect_ratio: str
-    width: int
-    height: int
     image_seed: int
     wildcard_seed: int
     positive_prompt: str
     negative_prompt: str
+    variant: int = 0
+
+    @property
+    def width(self) -> int:
+        dims = ASPECT_DIMENSIONS.get(self.aspect_ratio)
+        if dims is None:
+            return 1024
+        return dims[0]
+
+    @property
+    def height(self) -> int:
+        dims = ASPECT_DIMENSIONS.get(self.aspect_ratio)
+        if dims is None:
+            return 1024
+        return dims[1]
 
     def to_json(self) -> dict[str, Any]:
         return asdict(self)
@@ -59,8 +81,8 @@ class Suite:
     version: int
     name: str
     description: str
+    cases: list[EvalCase]
     concepts: list[Concept]
-    styles: list[PromptStyle]
     case_policy: dict[str, Any]
     scoring: dict[str, Any]
     aggregation: dict[str, Any]
@@ -74,23 +96,85 @@ def _read_yaml(path: Path) -> dict[str, Any]:
     return data
 
 
+def _load_jsonl(path: Path) -> list[dict[str, Any]]:
+    records: list[dict[str, Any]] = []
+    with path.open("r", encoding="utf-8") as handle:
+        for line in handle:
+            line = line.strip()
+            if line:
+                records.append(json.loads(line))
+    return records
+
+
+def _expand_legacy(concepts: list[Concept], styles: list[PromptStyle], policy: dict[str, Any]) -> list[EvalCase]:
+    if policy.get("expand") != "all_concepts_x_styles":
+        raise ValueError(f"Unsupported expand: {policy.get('expand')}")
+    ratios = policy["aspect_ratios"]
+    img_start = int(policy.get("image_seed_start", 1))
+    wc_start = int(policy.get("wildcard_seed_start", 100000))
+
+    cases: list[EvalCase] = []
+    idx = 0
+    for c in concepts:
+        w, h = ratios[c.aspect_ratio]
+        vals = asdict(c)
+        for s in styles:
+            idx += 1
+            cases.append(EvalCase(
+                case_id=f"{c.id}__{s.id}",
+                concept_id=c.id,
+                style_id=s.id,
+                domain=c.domain,
+                subject=c.subject,
+                probes=c.probes,
+                difficulty=c.difficulty,
+                aspect_ratio=c.aspect_ratio,
+                image_seed=img_start + idx,
+                wildcard_seed=wc_start + idx,
+                positive_prompt=s.positive_template.format(**vals),
+                negative_prompt=s.negative_template.format(**vals),
+            ))
+    return cases
+
+
 def load_suite(path: str | Path) -> Suite:
     suite_path = Path(path)
     root = suite_path.parent
     data = _read_yaml(suite_path)
-    concepts_data = _read_yaml(root / data["concepts"])["concepts"]
-    styles_data = _read_yaml(root / data["styles"])["styles"]
-    concepts = [Concept(**item) for item in concepts_data]
-    styles = [PromptStyle(**item) for item in styles_data]
+    policy = data.get("case_policy", {})
+
+    if "cases_file" in policy:
+        cases_data = _load_jsonl(root / policy["cases_file"])
+        cases = [EvalCase(**item) for item in cases_data]
+        seen: set[str] = set()
+        concepts: list[Concept] = []
+        for c in cases:
+            if c.concept_id not in seen:
+                seen.add(c.concept_id)
+                concepts.append(Concept(
+                    id=c.concept_id,
+                    domain=c.domain,
+                    subject=c.subject,
+                    aspect_ratio=c.aspect_ratio,
+                    probes=c.probes,
+                    difficulty=c.difficulty,
+                ))
+    else:
+        concepts_data = _read_yaml(root / data["concepts"])["concepts"]
+        concepts = [Concept(**item) for item in concepts_data]
+        styles_data = _read_yaml(root / data["styles"])["styles"]
+        styles = [PromptStyle(**item) for item in styles_data]
+        cases = _expand_legacy(concepts, styles, policy)
+
     return Suite(
         path=suite_path,
         suite_id=data["id"],
         version=int(data["version"]),
         name=data["name"],
         description=data.get("description", ""),
+        cases=cases,
         concepts=concepts,
-        styles=styles,
-        case_policy=data.get("case_policy", {}),
+        case_policy=policy,
         scoring=data.get("scoring", {}),
         aggregation=data.get("aggregation", {}),
     )
@@ -98,24 +182,10 @@ def load_suite(path: str | Path) -> Suite:
 
 def validate_suite(suite: Suite) -> list[str]:
     errors: list[str] = []
-    concept_ids = [item.id for item in suite.concepts]
-    style_ids = [item.id for item in suite.styles]
-    if len(concept_ids) != len(set(concept_ids)):
-        errors.append("concept ids must be unique")
-    if len(style_ids) != len(set(style_ids)):
-        errors.append("style ids must be unique")
+    if not suite.cases:
+        errors.append("suite must contain at least one case")
     if not suite.concepts:
         errors.append("suite must contain at least one concept")
-    if not suite.styles:
-        errors.append("suite must contain at least one style")
-    ratios = suite.case_policy.get("aspect_ratios", {})
-    for concept in suite.concepts:
-        if concept.aspect_ratio not in ratios:
-            errors.append(f"concept {concept.id} references unknown aspect_ratio {concept.aspect_ratio}")
-    for style in suite.styles:
-        for required in ("{concept}", "{details}", "{lighting}", "{composition}"):
-            if required not in style.positive_template:
-                errors.append(f"style {style.id} positive_template missing {required}")
     return errors
 
 
@@ -123,42 +193,15 @@ def expand_cases(suite: Suite) -> list[EvalCase]:
     errors = validate_suite(suite)
     if errors:
         raise ValueError("Invalid suite: " + "; ".join(errors))
+    return list(suite.cases)
 
-    policy = suite.case_policy
-    if policy.get("expand") != "all_concepts_x_styles":
-        raise ValueError(f"Unsupported case_policy.expand: {policy.get('expand')}")
-    ratios = policy["aspect_ratios"]
-    image_seed_start = int(policy.get("image_seed_start", 1))
-    wildcard_seed_start = int(policy.get("wildcard_seed_start", 100000))
 
-    cases: list[EvalCase] = []
-    index = 0
-    for concept in suite.concepts:
-        width, height = ratios[concept.aspect_ratio]
-        values = asdict(concept)
-        for style in suite.styles:
-            index += 1
-            positive = style.positive_template.format(**values)
-            negative = style.negative_template.format(**values)
-            cases.append(
-                EvalCase(
-                    case_id=f"{concept.id}__{style.id}",
-                    concept_id=concept.id,
-                    style_id=style.id,
-                    domain=concept.domain,
-                    subject=concept.subject,
-                    probes=concept.probes,
-                    difficulty=concept.difficulty,
-                    aspect_ratio=concept.aspect_ratio,
-                    width=int(width),
-                    height=int(height),
-                    image_seed=image_seed_start + index,
-                    wildcard_seed=wildcard_seed_start + index,
-                    positive_prompt=positive,
-                    negative_prompt=negative,
-                )
-            )
-    return cases
+def expand_cases_for_styles(suite: Suite, style_ids: list[str]) -> list[EvalCase]:
+    return [c for c in suite.cases if c.style_id in style_ids]
+
+
+def expand_cases_for_concepts(suite: Suite, concept_ids: list[str]) -> list[EvalCase]:
+    return [c for c in suite.cases if c.concept_id in set(concept_ids)]
 
 
 def write_jsonl(path: Path, rows: list[dict[str, Any]]) -> None:
