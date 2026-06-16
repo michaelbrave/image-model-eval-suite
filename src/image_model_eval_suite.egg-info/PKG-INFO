@@ -1,3 +1,19 @@
+Metadata-Version: 2.4
+Name: image-model-eval-suite
+Version: 0.1.0
+Summary: Portable prompt-style and image-model evaluation suites for ComfyUI models.
+Requires-Python: >=3.11
+Description-Content-Type: text/markdown
+Requires-Dist: Pillow>=10
+Requires-Dist: PyYAML>=6
+Requires-Dist: requests>=2.31
+Provides-Extra: improved-aesthetic
+Requires-Dist: numpy; extra == "improved-aesthetic"
+Requires-Dist: torch; extra == "improved-aesthetic"
+Requires-Dist: Pillow; extra == "improved-aesthetic"
+Provides-Extra: dev
+Requires-Dist: pytest>=8; extra == "dev"
+
 # image-model-eval-suite
 
 Portable evaluation suites and tooling for characterizing image-generation models.
@@ -61,19 +77,6 @@ Render the planned cases without generating images:
 image-model-eval render-plan suites/core-75/suite.yaml --out outputs/core-75-plan.jsonl
 ```
 
-Generate a cheap calibration run before larger tests:
-
-```bash
-image-model-eval calibrate-comfy suites/core-100/suite.yaml \
-  --model-id my-model \
-  --checkpoint my_model.safetensors \
-  --comfy-url http://127.0.0.1:8188 \
-  --out outputs/my-model/calibration \
-  --resolution-scale 0.5
-```
-
-`calibrate-comfy` runs one low-step smoke image, then a single-prompt step sweep scored by `dinov3-aesthetic-v1` by default. It writes `calibration.json` with the earliest step count within the aesthetic plateau so full runs do not waste time on unnecessary steps.
-
 Generate images with ComfyUI:
 
 ```bash
@@ -109,7 +112,7 @@ Score generated images:
 ```bash
 image-model-eval score-run outputs/my-model/core-75/run.json \
   --scorer brightness-contrast \
-  --scorer dinov3-aesthetic-v1
+  --scorer improved-aesthetic-predictor
 ```
 
 Build a model card from real run data:

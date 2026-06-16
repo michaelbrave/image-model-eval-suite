@@ -15,6 +15,8 @@ SD_CHAD_WEIGHT = REFERENCE_ROOT / "SD-Chad" / "chadscorer.pth"
 AESTHETICS_SCORER_ROOT = REFERENCE_ROOT / "aesthetics-scorer"
 AESTHETICS_SCORER_WEIGHT = AESTHETICS_SCORER_ROOT / "aesthetics_scorer" / "models" / "aesthetics_scorer_rating_openclip_vit_h_14.pth"
 AESTHETICS_ARTIFACT_WEIGHT = AESTHETICS_SCORER_ROOT / "aesthetics_scorer" / "models" / "aesthetics_scorer_artifacts_openclip_vit_h_14.pth"
+DINOV3_AESTHETIC_CHECKPOINT = Path("/home/mike/image-workflow/aesthetic-scorer-trainer/checkpoints/v1_dinov3_vitb.pt")
+DINOV3_AESTHETIC_MODEL = "vit_base_patch16_dinov3.lvd1689m"
 
 
 @dataclass(frozen=True)
@@ -251,6 +253,82 @@ class CafeAestheticScorer(Scorer):
         )
 
 
+class DinoV3AestheticV1Scorer(Scorer):
+    name = "dinov3-aesthetic-v1"
+    score_kind = "aesthetic"
+
+    def __init__(self, checkpoint_path: str | Path | None = None) -> None:
+        self.checkpoint_path = Path(checkpoint_path) if checkpoint_path else DINOV3_AESTHETIC_CHECKPOINT
+
+    @staticmethod
+    @lru_cache(maxsize=2)
+    def _runtime(checkpoint_path: str) -> dict[str, Any]:
+        try:
+            import timm  # type: ignore
+            import torch  # type: ignore
+            import torch.nn as nn  # type: ignore
+            from timm.data import create_transform, resolve_model_data_config  # type: ignore
+        except ImportError as exc:
+            raise RuntimeError("Install torch and timm before using dinov3-aesthetic-v1") from exc
+
+        class AestheticHead(nn.Module):
+            def __init__(self, input_dim: int, hidden_dim: int = 256, dropout: float = 0.1) -> None:
+                super().__init__()
+                self.net = nn.Sequential(
+                    nn.LayerNorm(input_dim),
+                    nn.Linear(input_dim, hidden_dim),
+                    nn.GELU(),
+                    nn.Dropout(dropout),
+                    nn.Linear(hidden_dim, 1),
+                )
+
+            def forward(self, features):  # type: ignore[no-untyped-def]
+                return self.net(features).squeeze(-1)
+
+        path = Path(checkpoint_path)
+        if not path.exists():
+            raise RuntimeError(f"Missing DINOv3 aesthetic checkpoint: {path}")
+        device = "cuda" if torch.cuda.is_available() else "cpu"
+        backbone = timm.create_model(DINOV3_AESTHETIC_MODEL, pretrained=True, num_classes=0)
+        config = resolve_model_data_config(backbone)
+        transform = create_transform(**config, is_training=False)
+        backbone.to(device).eval()
+        checkpoint = torch.load(path, map_location=device)
+        head = AestheticHead(
+            input_dim=int(checkpoint["input_dim"]),
+            hidden_dim=int(checkpoint["hidden_dim"]),
+            dropout=float(checkpoint["dropout"]),
+        ).to(device)
+        head.load_state_dict(checkpoint["state_dict"])
+        head.eval()
+        return {"torch": torch, "backbone": backbone, "head": head, "transform": transform, "device": device}
+
+    def score(self, image_path: Path, prompt: str | None = None, style_hint: str | None = None) -> ScoreResult:
+        runtime = self._runtime(str(self.checkpoint_path))
+        torch = runtime["torch"]
+        with Image.open(image_path) as image:
+            tensor = runtime["transform"](image.convert("RGB")).unsqueeze(0).to(runtime["device"])
+        with torch.no_grad():
+            features = runtime["backbone"](tensor)
+            if features.ndim > 2:
+                features = features.flatten(1).mean(dim=1, keepdim=True)
+            features = torch.nn.functional.normalize(features.float(), dim=-1)
+            raw = float(runtime["head"](features).detach().cpu().item())
+        normalized = 1.0 / (1.0 + math.exp(-raw))
+        return ScoreResult(
+            scorer_name=self.name,
+            score_kind=self.score_kind,
+            raw_score=raw,
+            normalized_score=normalized,
+            metadata={
+                "checkpoint_path": str(self.checkpoint_path),
+                "backbone": f"timm:{DINOV3_AESTHETIC_MODEL}",
+                "style_hint": style_hint,
+                "normalization": "sigmoid(raw_score)",
+            },
+        )
+
+
 class ImageRewardScorer(Scorer):
     name = "image-reward"
     score_kind = "prompt_reward"
@@ -286,6 +364,7 @@ SCORERS = {
     "aesthetics-scorer": AestheticsScorer,
     "cafe-aesthetic": CafeAestheticScorer,
     "image-reward": ImageRewardScorer,
+    "dinov3-aesthetic-v1": DinoV3AestheticV1Scorer,
 }
 
 
@@ -295,6 +374,8 @@ def make_scorer(name: str, **kwargs: Any) -> Scorer:
     cls = SCORERS[name]
     if name == "improved-aesthetic-predictor" and kwargs.get("weight_path"):
         return cls(weight_path=kwargs.get("weight_path"))  # type: ignore[call-arg]
+    if name == "dinov3-aesthetic-v1" and kwargs.get("weight_path"):
+        return cls(checkpoint_path=kwargs.get("weight_path"))  # type: ignore[call-arg]
     return cls()  # type: ignore[call-arg]
 
 

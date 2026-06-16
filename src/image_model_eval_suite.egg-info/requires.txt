@@ -1,0 +1,11 @@
+Pillow>=10
+PyYAML>=6
+requests>=2.31
+
+[dev]
+pytest>=8
+
+[improved-aesthetic]
+numpy
+torch
+Pillow

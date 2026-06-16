@@ -1,4 +1,20 @@
 concepts:
+- id: csv_prompt_001
+  domain: mixed_general
+  subject: character
+  aspect_ratio: portrait
+  probes:
+  - character
+  - lighting
+  - composition
+  - text-detail
+  - style-transfer
+  - color
+  difficulty: medium
+  source_prompt: original character art by Rebecca Sugar, adult swim, wide shot isolated,
+    00s graphic poster, Japan new graphic design, luminous white base sparse blue
+    and cyan, greys, silver, pastels, neon fluo colors, hotpink, yellowgreen, detailed
+    minimalist, Gucci, Warhol
 - id: csv_prompt_002
   domain: mixed_general
   subject: animal
@@ -82,6 +98,21 @@ concepts:
   source_prompt: A graceful mermaid, her iridescent tail shimmering in the sunlight
     as she dives through the depths of a crystal-clear ocean. In the style of Zhang
     Jingna, Anna Dittmann, Carlos Cruz-Diez, ocean fantasy, iridescence, vivid colors
+- id: csv_prompt_008
+  domain: illustration_painting
+  subject: interior
+  aspect_ratio: landscape
+  probes:
+  - interior
+  - lighting
+  - motion
+  - style-transfer
+  - color
+  difficulty: medium
+  source_prompt: colorful comic book pulp art, pop art, beautiful super stylish 1980s
+    newwave vaporwave female in a swanky wild heraldic synthwave bar, ink splatters,
+    dynamic, clean lines, graphic novel, neon colors, style of Frank Frazetta and
+    Patrick Nagel and Yoji Shinkawa and Gil Elvgren
 - id: csv_prompt_009
   domain: photography
   subject: character
@@ -113,6 +144,18 @@ concepts:
   difficulty: medium
   source_prompt: A surreal portrait, in the style of Pablo Picasso and Jean-Michel
     Basquiat
+- id: csv_prompt_012
+  domain: mixed_general
+  subject: general
+  aspect_ratio: square
+  probes:
+  - general
+  - lighting
+  - style-transfer
+  difficulty: medium
+  source_prompt: "magic the gathering, in the style of sci-fi art, dark gray and light\
+    \ crimson, jessie arms botke, explosive and chaotic, nouveau r\xE9alisme, jean\
+    \ fouquet, aleksi briclot"
 - id: csv_prompt_013
   domain: mixed_general
   subject: general
@@ -121,7 +164,7 @@ concepts:
   - general
   - motion
   difficulty: medium
-  source_prompt: El Salvador folk culture disco dancing
+  source_prompt: El Salvador folkcoture disco dancing
 - id: csv_prompt_014
   domain: anime_cartoon
   subject: portrait
@@ -187,6 +230,16 @@ concepts:
   source_prompt: The Anti Model, handsome, neon realism, chic illustration, glamour,
     pulp comics, dark saturated colour, stylish, swanky, vaporwave, synthwave ink,
     1980s, by Irene Sheri
+- id: csv_prompt_019
+  domain: mixed_general
+  subject: portrait
+  aspect_ratio: portrait
+  probes:
+  - portrait
+  - style-transfer
+  difficulty: medium
+  source_prompt: Dystopian Art Deco scene, Hell, Hades, Abyss by Mary Blair and Koloman
+    Moser and Luigi Russolo
 - id: csv_prompt_020
   domain: environment_world
   subject: portrait
@@ -200,6 +253,34 @@ concepts:
   source_prompt: a man walking through the dark night, in the style of digital painting
     and drawing, tonalist paintings, faith-inspired art, decaying landscapes, dark
     white and red, uhd image, fictional landscapes
+- id: csv_prompt_021
+  domain: photography
+  subject: portrait
+  aspect_ratio: portrait
+  probes:
+  - portrait
+  - lighting
+  - composition
+  - materials
+  - text-detail
+  - style-transfer
+  difficulty: medium
+  source_prompt: stunning 70mm still photography, loki desire fueled by fire, highly
+    detailed fabric, subtle catchlight, subtle filmgrain, balanced composition::2
+    closeup evocative minimalism::1 hdr photography, award winning, fashion - inspired,
+    poster - subtle freckles
+- id: csv_prompt_022
+  domain: illustration_painting
+  subject: portrait
+  aspect_ratio: portrait
+  probes:
+  - portrait
+  - materials
+  - style-transfer
+  difficulty: medium
+  source_prompt: an illustration of a woman in shades holds a glass, in the style
+    of ross tran, nikita veprikov, pink and amber, tran nguyen, grainy, candid portraiture,
+    terracotta
 - id: csv_prompt_023
   domain: illustration_painting
   subject: general
@@ -244,6 +325,26 @@ concepts:
   source_prompt: The hull of a massive ship in drydock, close up, decaying paint,
     alla prima gouache acrylic, bold palette knife, intense interplay of light and
     shadow, vivid moodiness
+- id: csv_prompt_026
+  domain: design_product
+  subject: interior
+  aspect_ratio: landscape
+  probes:
+  - interior
+  - lighting
+  difficulty: medium
+  source_prompt: modern interior, two levels room, ambient light, cozy, marker sketch
+- id: csv_prompt_027
+  domain: anime_cartoon
+  subject: portrait
+  aspect_ratio: portrait
+  probes:
+  - portrait
+  - character
+  - style-transfer
+  difficulty: medium
+  source_prompt: space warrior dressed in cave woman attire, blue and purple, hazy,
+    80s, anime, aesthetic, leiji matsumoto, galaxy express 999, detective mystery
 - id: csv_prompt_028
   domain: environment_world
   subject: character
@@ -300,6 +401,22 @@ concepts:
   difficulty: medium
   source_prompt: Impressionist Manga Art in the style of Paul Hedler, Anime Impressionism,
     MOto Hagio
+- id: csv_prompt_032
+  domain: environment_world
+  subject: animal
+  aspect_ratio: square
+  probes:
+  - animal
+  - lighting
+  - landscape
+  - text-detail
+  - style-transfer
+  - color
+  difficulty: medium
+  source_prompt: 'colorized seascape at night, lighthouse, in the style of graphic
+    novel inspired illustrations, intricate landscapes, guatemalan art, #pixelart,
+    poster art, sublime wilderness, high-contrast shading, stylized, van gogh, Screenprint,
+    Op art, Glitch art'
 - id: csv_prompt_033
   domain: mixed_general
   subject: portrait
@@ -320,6 +437,20 @@ concepts:
   - landscape
   difficulty: medium
   source_prompt: a garden full of flowers, Paul klee art style
+- id: csv_prompt_035
+  domain: environment_world
+  subject: landscape
+  aspect_ratio: landscape
+  probes:
+  - landscape
+  - lighting
+  - motion
+  - color
+  difficulty: medium
+  source_prompt: George Luks and Edward Moran, golden hour, Canoeing down roaring
+    rapids on the Colorado River in a ravine with high cliffs towering above, Erin
+    Hanson, Pierre Soulages, vibrant interplay of light and shadow, high contrast,
+    hyperrealism, minimalism, hyper-detailed whitewater, water splashing
 - id: csv_prompt_036
   domain: illustration_painting
   subject: animal
@@ -343,6 +474,17 @@ concepts:
   - style-transfer
   difficulty: medium
   source_prompt: Circles by David Hockney and Vincent van Gogh
+- id: csv_prompt_038
+  domain: mixed_general
+  subject: portrait
+  aspect_ratio: portrait
+  probes:
+  - portrait
+  - character
+  - style-transfer
+  difficulty: medium
+  source_prompt: D&D Monster, Ghoul, horror, concept art, stylized, Disco Elysium
+    Style, electrochemistry disco elysium, in the style of Aleksander Rostov, Portrait
 - id: csv_prompt_039
   domain: design_product
   subject: portrait
@@ -476,6 +618,21 @@ concepts:
     the soft blue waters. Painting by Claude Monet. Natural light, open air, unconventional
     compositions, and loose handling of the brush. Impressionism oil painting showing
     texture of the brushstrokes
+- id: csv_prompt_050
+  domain: mixed_general
+  subject: general
+  aspect_ratio: square
+  probes:
+  - general
+  - portrait
+  - lighting
+  - style-transfer
+  difficulty: hard
+  source_prompt: 'The Orphan Solryn (Capricorn) Domain: Survival, Endurance, Self-Reliance
+    Symbols: A broken chain, frostbitten trees, ember-like eyes Appearance: A cloaked
+    figure, their face weathered but their gaze unyielding. Myth: Solryn was abandoned
+    by the gods themselves, yet rose from the shadows through sheer resilience, now
+    watching over those who walk alone'
 - id: csv_prompt_051
   domain: mixed_general
   subject: general
@@ -559,6 +716,16 @@ concepts:
     holding a smoking submachine gun in both hands and firing violently at the front,
     trendy stickers, traces of bullets flying and scattered bullets on the ground,
     strong contrasting colors, cyberpunk style, full of dynamic power, a cold man
+- id: csv_prompt_058
+  domain: mixed_general
+  subject: general
+  aspect_ratio: square
+  probes:
+  - general
+  - style-transfer
+  difficulty: medium
+  source_prompt: A simple line drawing of coffee set and books, isolated on a white
+    background, in the style of Gemma Correll and Bill Watterson
 - id: csv_prompt_059
   domain: illustration_painting
   subject: interior
@@ -603,6 +770,23 @@ concepts:
     innocence, promoting trust in clean drinking water, cute and modern composition,
     style of flat vector illustrator, similar to Korean environmental campaign art,
     soft color blocking
+- id: csv_prompt_062
+  domain: illustration_painting
+  subject: general
+  aspect_ratio: square
+  probes:
+  - general
+  - materials
+  - style-transfer
+  - color
+  difficulty: hard
+  source_prompt: Color illustration in the style of Wu Guanzhong, inspired by the
+    Chinese traditional solar term "Beginning of Winter". In the open wilderness,
+    you can see two or three cedar trees, covered with a little snow, and a few animal
+    footprints on the ground, The scenery of early winter. Large areas of white space,
+    Clever use of negative space, stone-and-ink painting technique, airy brushwork,
+    Low saturation colors, minimalist aesthetic, elegant and fluid line work, poetic
+    and serene atmosphere
 - id: csv_prompt_063
   domain: mixed_general
   subject: general
@@ -623,6 +807,21 @@ concepts:
     clay imperfections throughout. The smooth, polished clay finish contrasts with
     areas showing more pronounced sculpting marks and surface irregularities typical
     of handcrafted ceramic work
+- id: csv_prompt_064
+  domain: mixed_general
+  subject: animal
+  aspect_ratio: square
+  probes:
+  - animal
+  - portrait
+  - lighting
+  - product
+  - text-detail
+  difficulty: medium
+  source_prompt: owl hidden among tree branches at night, small rounded form and large
+    eyes, soft moonlight filtering through leaves, traditional Japanese ukiyo-e shin-hanga
+    style, muted greens and cool browns, parchment background, fine linework, red
+    seal stamp, pseudo-Japanese markings, no English text
 - id: csv_prompt_065
   domain: mixed_general
   subject: product
@@ -727,6 +926,23 @@ concepts:
     \ Semi-abstract oil painting, distinct brushstrokes Composition: Horizontal, balanced,\
     \ natural flow Colors: Warm floral tones + cool gray-blue background Lighting:\
     \ Soft, diffused, non-dramatic Style: Modern - decorative - gallery aesthetic"
+- id: csv_prompt_070
+  domain: design_product
+  subject: portrait
+  aspect_ratio: portrait
+  probes:
+  - portrait
+  - lighting
+  - composition
+  - color
+  difficulty: hard
+  source_prompt: 'elegant woman in big hat, consistent mid-century 60s-70s flat vector
+    style, solid flat colors only, no gradients, no textures, warm retro palette (#C23E3E,
+    #D8792C, #F6E8D8, #AEA97A, #6E8BA1), thick dark-brown outline (#3A2D29, 12% width),
+    bold rounded geometric shapes, simplified forms, clean cream background (#F6E8D8),
+    wide flat shadow at 45 degrees (dusty blue #6E8BA1), no inner shading, no highlights,
+    no gloss, large centered composition with 25% empty space, retro menu aesthetic,
+    1970s illustration style'
 - id: csv_prompt_071
   domain: anime_cartoon
   subject: portrait
@@ -774,6 +990,15 @@ concepts:
     a built-in plant holder. Emphasis on craftsmanship, wood structure, and greenery
     combined. Glasses, work overall, curly hair. 6B graphite pencil drawing, loose
     sketch lines, editorial illustration style
+- id: csv_prompt_074
+  domain: mixed_general
+  subject: portrait
+  aspect_ratio: portrait
+  probes:
+  - portrait
+  difficulty: medium
+  source_prompt: A cartoon girl DJ is spinning records, and one of her hands is stretched
+    out towards the camera, creating a particularly large effect
 - id: csv_prompt_075
   domain: mixed_general
   subject: portrait
@@ -909,6 +1134,34 @@ concepts:
     hand rests near her chin. a green bracelet is visible on her right wrist. the
     background is a plain white, making the figure and drink stand out with energetic
     brushstrokes and minimal outlines
+- id: csv_prompt_083
+  domain: mixed_general
+  subject: portrait
+  aspect_ratio: portrait
+  probes:
+  - portrait
+  - lighting
+  difficulty: medium
+  source_prompt: silhouette of a woman in warm golden light, soft and dreamy, contrast
+    with dark background, medieval setting, romantic melancholy
+- id: csv_prompt_084
+  domain: illustration_painting
+  subject: animal
+  aspect_ratio: square
+  probes:
+  - animal
+  - portrait
+  - lighting
+  - materials
+  - text-detail
+  difficulty: hard
+  source_prompt: a vibrant oil on canvas painting of a sailboat at sundown. the main
+    subject is a sailboat with two large sails, rendered with visible brushstrokes,
+    facing towards the right. the sky behind the boat is ablaze with orange and yellow
+    tones from the setting sun, which is clearly visible on the right. clouds are
+    scattered across the sky, with hints of blue. the water's surface reflects the
+    golden light, appearing textured and fluid. a faint, dark shape is present in
+    the far left of the water
 - id: csv_prompt_085
   domain: mixed_general
   subject: general
@@ -950,6 +1203,22 @@ concepts:
   difficulty: medium
   source_prompt: cyborg hacker anime girl, virtual reality internet interface, y2k
     style
+- id: csv_prompt_088
+  domain: mixed_general
+  subject: general
+  aspect_ratio: square
+  probes:
+  - general
+  - lighting
+  - color
+  difficulty: hard
+  source_prompt: The game employs a 3D CG style, depicting a female athlete dressed
+    in a stylish summer short-sleeved tracksuit. The lighting effects against the
+    backdrop of dawn, the archery training range in the stadium, the archer's posture
+    aiming at the distant bullseye, and the minimalist, ethereal visual style, combined
+    with high-contrast lighting and a tranquil, simple background, all contribute
+    to an immersive gaming experience. The high-contrast color scheme and extremely
+    high color saturation are rendered using the Unreal Engine
 - id: csv_prompt_089
   domain: mixed_general
   subject: graphic_design
@@ -990,6 +1259,18 @@ concepts:
   source_prompt: minimal hand-drawn pen illustration, single blue ink line art, warm
     off-white paper texture, slow and calm cafe mood, editorial poster style, lots
     of breathing room
+- id: csv_prompt_092
+  domain: photography
+  subject: general
+  aspect_ratio: square
+  probes:
+  - general
+  - composition
+  difficulty: medium
+  source_prompt: Street Photography, creative, expressive, unique, high-quality, Canon
+    EOS 5D Mark IV DSLR, f/5.6 aperture, 1/125 second shutter speed, ISO 100, Adobe
+    Photoshop, award-winning, glibatree style, experimental techniques, unusual perspectives,
+    attention to detail
 - id: csv_prompt_093
   domain: illustration_painting
   subject: animal
@@ -1020,6 +1301,27 @@ concepts:
   source_prompt: lone Avro Arrow sitting in spotlight inside dark hangar, surrounded
     by shadows, cinematic masterpiece shot, emotional ending, ultra realistic, dramatic
     atmosphere
+- id: csv_prompt_095
+  domain: photography
+  subject: portrait
+  aspect_ratio: portrait
+  probes:
+  - portrait
+  - lighting
+  - composition
+  - materials
+  - text-detail
+  - style-transfer
+  - color
+  difficulty: hard
+  source_prompt: Stylized pop art comic illustration of an elegant Black woman with
+    soft locs in a chic updo, wearing oversized round black sunglasses with gold trim,
+    large hoop earrings, confident lifted chin, glossy lips, vibrant patterned fashion
+    styling, rich royal color palette of turquoise, orange, magenta, and gold, halftone
+    comic dots, bold ink outlines, retro 70s soul aesthetic, luxury comic-book poster
+    style, dramatic cel-shaded lighting, vintage pop-art texture, confident feminine
+    energy, high-fashion illustrated aesthetic, vibrant editorial composition, comic-inspired
+    artwork, NOT photorealistic
 - id: csv_prompt_096
   domain: environment_world
   subject: portrait
@@ -1033,6 +1335,22 @@ concepts:
   difficulty: medium
   source_prompt: Palette knife painting about a beautiful woman's face, abstract,
     in the style of Diego Rivera, in the style of chicano art movement
+- id: csv_prompt_097
+  domain: anime_cartoon
+  subject: graphic_design
+  aspect_ratio: square
+  probes:
+  - graphic_design
+  - motion
+  - text-detail
+  - style-transfer
+  - color
+  difficulty: hard
+  source_prompt: Designer vinyl art toy mascot, stylized animal figurine, a playful
+    horse, mix of heroic blocky and curved forms, carved vinyl style, bold attitude
+    and swagger. Sculpted with clear planes and chunky, powerful proportions, large
+    oversized paws. Features an oversized head, embossed anime emoji expression (^_~),
+    expressive dynamic pose, confident pose. Bold posterized colors.
 - id: csv_prompt_098
   domain: photography
   subject: animal
@@ -1068,248 +1386,11 @@ concepts:
   - lighting
   - color
   difficulty: hard
-  source_prompt: a surreal, ethereal porsche 911 gt3 rs, abstract photo, silhouette
+  source_prompt: a surreal, ethereal porsche 911 gt3 rs, abstract photo, silhoutte
     of porsche barely visible through vibrant cool-toned gradients, glowing violet
     and deep blue background, soft cyan blending into the car body, soft focus, tranquil
     and mysterious mood, blurred edges, contemporary abstract photography style
-- id: inbox_candidate_006
-  domain: design_product
-  subject: portrait
-  aspect_ratio: portrait
-  probes:
-  - portrait
-  - lighting
-  - composition
-  - materials
-  - product
-  - text-detail
-  - style-transfer
-  - color
-  difficulty: hard
-  source_prompt: Full-body fashion illustration of a young woman walking down a Parisian
-    street in autumn, wearing a long camel wool coat draped open over a black ribbed
-    turtleneck sweater and high-waisted wide-leg cream trousers, holding a quilted
-    tan leather shoulder bag with interlocking CC logo and chain strap in her left
-    hand while her right hand slides into a pocket, short dark brown wavy hair gently
-    lifted by a breeze, pearl stud earrings, natural fresh makeup and a confident
-    serene expression; cinematic shallow depth of field with soft warm golden-hour
-    light, subtle bokeh on Haussmann-style buildings and slow-moving cars in the blurred
-    background, scattered fallen leaves on the pavement; semi-realistic digital painting
-    / fashion illustration style with clean linework, soft gradients, high-detail
-    fabric textures and realistic folds, emphasis on elegant silhouettes and tactile
-    materials, muted autumn palette (camel, cream, black, warm ochre), vertical composition,
-    crisp foreground, gentle film grain and polished finishing.
-- id: inbox_candidate_008
-  domain: design_product
-  subject: animal
-  aspect_ratio: square
-  probes:
-  - animal
-  - portrait
-  - lighting
-  - composition
-  - materials
-  - landscape
-  - text-detail
-  - style-transfer
-  - color
-  difficulty: hard
-  source_prompt: 'premium editorial travel poster illustration of the Great Barrier
-    Reef, Australia. Style: Flat vector illustration, ultra-clean minimalism, mid-century
-    modern travel poster aesthetic, inspired by vintage tourism prints and Scandinavian
-    graphic design., Use crisp shapes, smooth color blocks, and harmonious vibrant
-    tones. Composition (vertical 3:4 layout): Foreground (underwater): A rich coral
-    reef ecosystem filled with colorful corals in pink, orange, yellow, and red tones.
-    Include tropical fish of various species (striped, bright yellow, blue, and orange),
-    and a large sea turtle swimming gracefully toward the right. Clear turquoise water
-    with high visibility. Midground: A female snorkeler swimming horizontally just
-    beneath the water surface, wearing fins and a snorkel mask, observing the reef
-    below. Light rays subtly pass through the water surface. Background (above water):
-    A calm tropical ocean with shallow reef patches visible through crystal-clear
-    water. A white leisure boat floats peacefully on the left, and a small sailboat
-    appears far in the distance. On the horizon, soft green islands or hills stretch
-    across. Sky: Bright blue sky with fluffy white clouds and a few birds flying,
-    enhancing the serene vacation mood. Typography: At the bottom of the poster, include
-    bold uppercase text: "GREAT BARRIER REEF" Below it, smaller spaced-out text: "AUSTRALIA"
-    Add a small decorative coral icon between divider lines. Mood & Lighting: Bright
-    daylight, calm, inviting, tropical paradise atmosphere. Colors should feel fresh,
-    vibrant, and relaxing with strong contrast between coral reef and ocean blues.'
-- id: inbox_candidate_019
-  domain: design_product
-  subject: portrait
-  aspect_ratio: portrait
-  probes:
-  - portrait
-  - lighting
-  - product
-  difficulty: hard
-  source_prompt: 'A low-angle shot of a young man sitting on the edge of a concrete
-    wall against a deep blue sky. Subject: A muscular young man with short dark hair
-    and confident, direct eyes looking down at the camera. Clothing: He wears an oversized
-    white t-shirt featuring a red ''Carhartt'' logo and black graphic print above
-    it; paired with light-wash denim shorts that are frayed at the hem, thick ribbed
-    white crew socks pulled up high, and chunky black skate sneakers with large white
-    soles. Environment: A stark concrete ledge or retaining wall serves as his seat,
-    set against a vast cloudless blue sky with faint wisps of clouds in the background.
-    Lighting: Bright midday sunlight illuminates him from above, casting sharp shadows
-    on his legs and face while highlighting muscle definition.'
-- id: inbox_candidate_110
-  domain: design_product
-  subject: portrait
-  aspect_ratio: portrait
-  probes:
-  - portrait
-  - character
-  - color
-  difficulty: medium
-  source_prompt: A flat illustration of 2 asian women and 1 asian man happily drinking
-    PET bottle drink togher, The character is in the lower right corner of the screen,
-    vibrant colors, Medium shot, simple minimalistic style, styled in the manner of
-    vector illustrations, high resolution, and high details.
-- id: inbox_candidate_129
-  domain: design_product
-  subject: interior
-  aspect_ratio: landscape
-  probes:
-  - interior
-  - portrait
-  - lighting
-  - composition
-  - materials
-  - text-detail
-  - style-transfer
-  - color
-  difficulty: hard
-  source_prompt: 'A low-angle shot captures two paper-cutout figures, crafted from
-    aged book pages and inked with faded typography, seated on the open spine of a
-    massive, fanned-out ledger. Their heads tilt toward each other in an intimate
-    embrace framed by the heart-shaped curve formed by their respective halves; one
-    figure wears teal trousers and brown boots while the other is clad in red fabric
-    over pale limbs. The scene rests upon gritty earth littered with loose paper fragments
-    under dim ambient light that casts deep shadows across the background, which blurs
-    into a cool-toned indigo haze suggesting an abandoned library or forgotten archive.
-    A single warm backlighting source glows from within the heart''s interior-perhaps
-    candlelight filtering through translucent pages-or perhaps LED illumination designed
-    to mimic moonlit glow-that bathes their faces and upper bodies in soft amber tones
-    while leaving surrounding areas cloaked in shadow, creating high contrast that
-    emphasizes texture over form. The camera remains still with shallow depth of field;
-    foreground debris is softly blurred while the figures remain crisp against a background
-    rendered as abstracted layers of ink-stained paper edges. Composition centers
-    on symmetry: their mirrored postures and shared space within the heart shape create
-    visual balance despite asymmetrical clothing colors, evoking quiet melancholy
-    through deliberate restraint rather than grandeur or action.'
-- id: inbox_candidate_026
-  domain: environment_world
-  subject: portrait
-  aspect_ratio: portrait
-  probes:
-  - portrait
-  - lighting
-  - landscape
-  difficulty: hard
-  source_prompt: 'A cinematic portrait of a young woman with voluminous wavy brown
-    hair and fair skin sitting on grass in an outdoor park setting Clothing: wearing
-    a white floral dress with pink flowers, ruffled sleeves, and spaghetti straps
-    Lighting: bathed in warm golden hour sunlight hitting her from the side, creating
-    soft highlights through her curls and lens flares Environment: blurred green forest
-    background with bokeh light spots and grassy ground Camera: shallow depth of field
-    portrait shot emphasizing subject against out-of-focus nature backdrop.'
-- id: inbox_candidate_033
-  domain: environment_world
-  subject: general
-  aspect_ratio: square
-  probes:
-  - general
-  - lighting
-  - composition
-  - materials
-  - landscape
-  - text-detail
-  difficulty: hard
-  source_prompt: 'Oil painting of a sun-drenched coastal village clinging to steep
-    cliffs overlooking the sea Environment: deep blue Mediterranean waters filled
-    with small sailboats and yachts, rugged green mountains rising from the coast
-    in the background under a bright sky with fluffy white clouds; buildings feature
-    terracotta roofs, warm ochre walls, wrought iron balconies adorned with vibrant
-    red flowers and potted plants cascading down stairways. Camera: slightly elevated
-    angle capturing the layered depth from foreground rooftops toward distant horizon,
-    wide composition emphasizing scale and grandeur. Lighting: strong midday sunlight
-    casting soft shadows across stone pathways and building facades, enhancing texture
-    of walls and foliage with warm golden tones reflecting off domes and roofs. Style
-    Details: thick impasto brushstrokes creating rich painterly textures reminiscent
-    of classical landscape art; visible artist signature in bottom right corner adds
-    authenticity to the scene''s handcrafted feel.'
-- id: inbox_candidate_055
-  domain: environment_world
-  subject: animal
-  aspect_ratio: square
-  probes:
-  - animal
-  - materials
-  - landscape
-  - color
-  difficulty: hard
-  source_prompt: In a mesmerizing watercolor painting, an enchantingly elusive forest
-    unfolds on the canvas. The main subject of this artwork is a peculiar vogue-worthy
-    forest, where oversized mushrooms with delicate lace-like caps bloom amidst a
-    swirling mist. The ethereal hues of emerald, amethyst, and sapphire create a dream-like
-    atmosphere, effortlessly transporting viewers into a mystical realm. This remarkable
-    image, rendered in exquisite detail, captivates with its whimsical elegance, leaving
-    a lasting impression of tranquility and wonder.
-- id: inbox_candidate_127
-  domain: environment_world
-  subject: portrait
-  aspect_ratio: portrait
-  probes:
-  - portrait
-  - lighting
-  - landscape
-  difficulty: medium
-  source_prompt: hot spring in a river flow, steam rises from the water, a woman with
-    long wet blonde hair swims in the water, The image quality is grainy, with a slight
-    blur softening the details. The lighting is dim, casting shadows that obscure
-    her features.
-- id: inbox_candidate_134
-  domain: environment_world
-  subject: landscape
-  aspect_ratio: landscape
-  probes:
-  - landscape
-  - lighting
-  - color
-  difficulty: hard
-  source_prompt: A surreal, whimsical and endearing illustration made in ink and watercolor
-    wash style, with fairytale storybook mood. a cute adorable kitten sleeping in
-    a cardboard box on a kitchen counter. Diffuse natural light through large windows
-    casting soft shadows, set against a backdrop of a quaint and rustic kitchen with
-    a garden scene outside the window.
-- id: inbox_candidate_004
-  domain: anime_cartoon
-  subject: character
-  aspect_ratio: portrait
-  probes:
-  - character
-  - lighting
-  - composition
-  - materials
-  - text-detail
-  - style-transfer
-  - color
-  difficulty: hard
-  source_prompt: Adorable kawaii family travel collage, combining four different scenes
-    in one composition, cute anime-inspired parents, friends and children taking selfies
-    and exploring together, handcrafted paper-cut diorama style, layered cardboard
-    and felt textures, miniature world aesthetic, cozy pastel color palette, soft
-    cinematic lighting, playful vacation atmosphere, urban city station scene, shopping
-    mall selfie corner, outdoor nature park, and crowded playground blended into one
-    seamless scrapbook-style artwork, charming sticker-like white outlines around
-    characters, tiny tourists and pedestrians in background, whimsical handcrafted
-    textures, soft depth of field, highly detailed paper craft illustration, warm
-    nostalgic mood, cute casual outfits with glasses, caps, bags and sandals, dreamy
-    Instagram kawaii aesthetic, storybook composition, ultra detailed miniature environment,
-    3D layered paper art, tilt-shift effect, cozy wholesome family travel vibes, premium
-    handcrafted look, high detail, 8k, vertical composition.
-- id: inbox_candidate_030
+- id: csv_prompt_100
   domain: anime_cartoon
   subject: portrait
   aspect_ratio: portrait
@@ -1317,302 +1398,24 @@ concepts:
   - portrait
   - character
   - lighting
-  - materials
-  - style-transfer
-  - color
-  difficulty: hard
-  source_prompt: 'Digital illustration of a stylized young woman with short dark bob
-    hair and large round glasses Subject: youthful face with soft features, expressive
-    eyes peering over thick black frames, wearing small orange circular earrings and
-    a delicate gold pendant necklace on a thin choker strap Clothing: fitted burnt-orange
-    long-sleeve top adorned with subtle geometric patterns in darker tones, cropped
-    hemline revealing midriff. Environment: warm glowing orange backdrop suggesting
-    fire or sunset ambiance, softly blurred to emphasize subject. Lighting: soft directional
-    glow from behind and above creating gentle highlights on face and shoulders, enhancing
-    depth and mood Style Details: smooth digital rendering with anime-inspired proportions,
-    clean lines, vibrant saturated colors, polished finish typical of modern 3D character
-    art.'
-- id: inbox_candidate_042
-  domain: anime_cartoon
-  subject: portrait
-  aspect_ratio: portrait
-  probes:
-  - portrait
-  - lighting
   - composition
-  - materials
-  - text-detail
-  - style-transfer
-  - color
-  difficulty: hard
-  source_prompt: A serene and sunlit scene featuring a small, elegant rowboat gently
-    floating on crystal-clear turquoise water. The boat is painted white with soft
-    blue interiors, and its reflection shimmers on the calm surface of the water.
-    The sunlight penetrates the water, creating intricate patterns of light and shadow
-    that ripple across the sandy bottom, adding depth and vibrancy to the composition.
-    Seated gracefully at the bow of the boat is a woman dressed in a flowing white
-    summer dress with light blue floral patterns. She wears a wide-brimmed straw hat
-    that casts a delicate shadow over her face, exuding a sense of calm and leisure.
-    Her posture is relaxed, as she gazes into the tranquil expanse of the water around
-    her. The scene is bathed in bright natural light, with a color palette dominated
-    by shades of turquoise, white, and soft blue, creating a refreshing and peaceful
-    atmosphere. The art style is highly detailed and painterly, emphasizing the interplay
-    of light, water, and texture to evoke a sense of serenity and timeless beauty,
-    DB4RZ, DB4RZ style painting, NeoPigma, in the style of cksc, anime, cyberpunk,
-    masterpiece, award winning.
-- id: inbox_candidate_045
-  domain: anime_cartoon
-  subject: general
-  aspect_ratio: square
-  probes:
-  - general
-  - lighting
-  - materials
-  - style-transfer
-  - color
-  difficulty: medium
-  source_prompt: blurry background, depth of field, rim light, chiaroscuro, anime
-    coloring, flat color, sketch, oil painting, masterpiece, best quality, red apple,
-    ants, gold sand.
-- id: inbox_candidate_051
-  domain: anime_cartoon
-  subject: portrait
-  aspect_ratio: portrait
-  probes:
-  - portrait
-  - lighting
-  - style-transfer
-  difficulty: medium
-  source_prompt: A beautiful brunette pilot girl, beautiful, moody lighting, 90s anime
-    minimal masterpiece.
-- id: inbox_candidate_003
-  domain: photography
-  subject: portrait
-  aspect_ratio: portrait
-  probes:
-  - portrait
-  - lighting
-  - materials
-  - text-detail
-  - style-transfer
-  difficulty: hard
-  source_prompt: A close-medium shot of a young Japanese woman in her bedroom on an
-    ordinary morning, captured in authentic daily life photography as a natural candid
-    moment. She is seated sideways on the edge of the bed, not fully awake yet, photographed
-    from a slightly elevated three-quarter angle with cool-to-warm morning window
-    light entering from the left. East Asian young woman in her early 20s. Almond-shaped
-    eyes with soft natural single eyelids, slightly elongated eye corners, still carrying
-    the heaviness of just waking. Straight refined nose with a delicate bridge. Skin
-    tone fair to light beige - skin subsurface scattering visible under the soft directional
-    morning window light, specular micro-highlights catching gently on her cheekbone
-    and nose ridge, fine skin texture perceptible, Naturally straight fine black hair
-    loosely gathered, slightly disheveled from sleep. She wears a loose oversized
-    cotton sleep shirt and soft shorts, nothing styled. Her gaze drifts toward the
-    window, posture relaxed and unhurried, one hand resting on her knee, the other
-    barely holding a phone face-down. The bedroom background suggests real life -
-    slightly unmade linen, a potted plant near the window partially in shadow, small
-    cluttered bedside items. Two or three stray hairs fall across her cheek in natural
-    asymmetric displacement, not geometrically placed. Soft directional morning light
-    from a side window, cool-to-warm transition across her face and shoulder, long
-    gentle shadows on the bedding behind her. The mood is quietly adrift - not sad,
-    not performing, just suspended in the unhurried first minutes of the day. Subtle
-    ISO 400 film grain in shadow areas, photographic noise texture not CG render smoothness.
-    Aspect ratio 2:3., not cartoon, not digitally painted, not illustration, not anime.
-- id: inbox_candidate_005
-  domain: photography
-  subject: portrait
-  aspect_ratio: portrait
-  probes:
-  - portrait
-  - lighting
   - materials
   - motion
   - text-detail
   - style-transfer
   - color
   difficulty: hard
-  source_prompt: A realistic close-up shot of a small digital camera screen glowing
-    brightly in a dark indoor environment. Displayed on the LCD is a candid early-2010s
-    style photograph of a young East Asian woman with long dark wavy hair standing
-    beside a wooden shelf packed tightly with colorful comic books and magazines.
-    She wears a black spaghetti-strap top with a loose white cardigan hanging casually
-    from both shoulders and faded blue jeans. Captured mid-laugh while turning her
-    face slightly sideways, her expression feels spontaneous and natural, with hair
-    falling softly across part of her cheek. The harsh direct flash from the compact
-    camera creates strong highlights on her face and cardigan while flattening shadows
-    in the background, producing an authentic nostalgic digicam aesthetic. Slight
-    motion blur and digital grain enhance the candid realism. Camera UI overlays are
-    visible across the LCD screen, including the timestamp "8. 1. 2012 3:15 AM, "
-    exposure data "1/30 F3.4 ISO 100, " focus indicators, and a small green battery
-    symbol in the corner. The image preserves visible screen pixel structure, slight
-    glare reflections, chromatic softness, and compressed digital texture. Outside
-    the LCD, the surrounding darkness fades smoothly into blur, emphasizing the glowing
-    nostalgic screen. Shot to resemble an authentic Sony Cyber-shot point-and-shoot
-    camera from the early 2010s using a CCD sensor with vintage digital rendering
-    and imperfect flash exposure.
-- id: inbox_candidate_010
-  domain: photography
-  subject: portrait
-  aspect_ratio: portrait
-  probes:
-  - portrait
-  - lighting
-  - composition
-  difficulty: hard
-  source_prompt: 'Serene mountain vista scene of an adventurous man standing triumphantly
-    atop a rugged Himalayan peak at dawn Subject: rugged man in his 30s with a short
-    beard, windswept hair, and determined expression Clothing: lightweight hiking
-    jacket, cargo pants, sturdy trekking boots, backpack slung over one shoulder Action:
-    standing with arms outstretched, gazing at the horizon, exuding a sense of accomplishment
-    Environment: snow-capped Himalayan peaks under a clear sky, misty valleys below,
-    prayer flags fluttering in the wind Camera: wide-angle shot from a low perspective,
-    capturing the vast scale of the mountains Lighting: golden hour sunrise casting
-    warm orange glows and long shadows across rocky terrain Style Details: hyper-realistic
-    adventure photography with crisp details, dramatic depth, and epic natural beauty.'
-- id: inbox_candidate_011
-  domain: photography
-  subject: animal
-  aspect_ratio: square
-  probes:
-  - animal
-  - lighting
-  - composition
-  - materials
-  - text-detail
-  - color
-  difficulty: hard
-  source_prompt: "Food photography shot of a chilled strawberry shake with creamy\
-    \ vibrant appeal and refreshing summer indulgence Subject: tall frosted glass\
-    \ of thick strawberry milkshake topped with whipped cream, fresh strawberries,\
-    \ and colorful sprinkles Action: shake with condensation droplets on the glass,\
-    \ a striped paper straw inserted, and soft cream swirling at the top Environment:\
-    \ bright caf\xE9 counter setting with a pastel background, subtle ice cream parlor\
-    \ atmosphere, and a sunny summery mood Camera: close-up three-quarter angle, tight\
-    \ composition focused on the glass texture and toppings, premium commercial food\
-    \ photography framing Lighting: cool soft light with warm highlights, glistening\
-    \ dew on the glass, vibrant pink tones, and a refreshing icy glow Objects: metal\
-    \ milkshake cup in background, fresh strawberries, whipped cream swirl, colorful\
-    \ straw, and scattered sprinkles Style Details: ultra-realistic professional food\
-    \ photography, creamy texture detail, vibrant berry colors, glossy condensation,\
-    \ and polished dessert advertisement aesthetic."
-- id: inbox_candidate_001
-  domain: illustration_painting
-  subject: portrait
-  aspect_ratio: portrait
-  probes:
-  - portrait
-  - character
-  - lighting
-  - composition
-  - materials
-  - product
-  - text-detail
-  difficulty: hard
-  source_prompt: highly detailed low-poly papercraft portrait of a stylish young man,
-    designed like an origami paper sculpture. The character has curly dark brown hair,
-    a trimmed beard, and wears slightly black-tinted geometric sunglasses with thin
-    black frames. His shirt is medium grey with sharp polygonal folds and realistic
-    paper texture. Use faceted angular shapes across the face, hair, and clothing,
-    with realistic shadows and layered paper depth. Minimal clean white studio background,
-    soft lighting, ultra-realistic paper craft aesthetic, modern geometric art style,
-    high detail, centered composition, 8k quality.
-- id: inbox_candidate_002
-  domain: illustration_painting
-  subject: portrait
-  aspect_ratio: portrait
-  probes:
-  - portrait
-  - character
-  - lighting
-  - composition
-  - materials
-  - text-detail
-  - style-transfer
-  - color
-  difficulty: hard
-  source_prompt: A vibrant whimsical digital illustration of a cozy indie hair salon,
-    featuring a young girl with long brown hair getting her hair styled by a fashionable
-    hairstylist. Bright pink, purple, orange, and peach color palette with playful
-    retro decor, indoor plants, patterned walls, confetti shapes, beauty tools, flowers,
-    and soft ambient lighting. Cute feminine aesthetic, dreamy cartoon style, expressive
-    characters with rosy cheeks, highly detailed textures, modern flat illustration
-    mixed with painterly shading, colorful composition, trendy Pinterest aesthetic,
-    cozy creative atmosphere, ultra-detailed, 2D editorial art style.
-- id: inbox_candidate_007
-  domain: illustration_painting
-  subject: animal
-  aspect_ratio: square
-  probes:
-  - animal
-  - lighting
-  - composition
-  - materials
-  - text-detail
-  - style-transfer
-  - color
-  difficulty: hard
-  source_prompt: "Dreamy watercolor travel illustration of a peaceful Korean city\
-    \ street, hand-painted urban sketchbook style, delicate ink linework mixed with\
-    \ soft watercolor washes, cozy caf\xE9 storefronts, warm bakery lights glowing\
-    \ through windows, quiet morning atmosphere after light rain, reflective wet pavement,\
-    \ pedestrians with umbrellas and tote bags, bicycles parked along narrow streets,\
-    \ traditional Korean signs and typography, subtle Korean text labels, soft beige\
-    \ paper texture background, architectural sketch aesthetic, calm everyday city\
-    \ life, muted earthy palette with warm browns, faded greens, cream whites and\
-    \ soft blue accents, highly detailed pen-and-ink drawing, loose expressive brush\
-    \ strokes, travel journal composition, editorial postcard layout, elegant serif\
-    \ title text at top (\"SEOUL\", \"JEONJU\", \"DAEJEON\"), handwritten notes and\
-    \ date stamps, vintage travel diary aesthetic, cozy East Asian urban scenery,\
-    \ cinematic slice-of-life mood, watercolor bleeding edges, natural perspective,\
-    \ atmospheric depth, peaceful storytelling illustration, minimalist negative space,\
-    \ ultra detailed watercolor texture, sketchbook traveler aesthetic, nostalgic\
-    \ caf\xE9 culture vibes, Studio Ghibli-inspired realism, European urban sketching\
-    \ style mixed with Korean street scenery, soft daylight, calm and poetic composition,\
-    \ vertical poster design, premium art print quality."
-- id: inbox_candidate_015
-  domain: mixed_general
-  subject: portrait
-  aspect_ratio: portrait
-  probes:
-  - portrait
-  - lighting
-  - materials
-  - text-detail
-  difficulty: hard
-  source_prompt: 'A stylish man leaning casually against a textured stone wall in
-    an urban setting Subject: A handsome young man with short dark hair and facial
-    stubble wearing sunglasses. Clothing: Wearing a navy blue denim shirt over a white
-    t-shirt with bold red text, paired with beige chinos and tan sneakers. Accessories:
-    He wears a black baseball cap, a wristwatch on his left arm, has keys hanging
-    from his belt loop, and hands are in pockets. Environment: Standing next to large
-    stone blocks of an old building under bright sunlight casting sharp shadows; paved
-    sidewalk background. Lighting: Strong warm golden hour light creating deep contrast
-    and long dramatic shadows along the wall and floor. Camera: Medium shot framed
-    at eye level with a shallow depth of field blurring the darkened doorway behind
-    him.'
-- id: inbox_candidate_016
-  domain: mixed_general
-  subject: portrait
-  aspect_ratio: portrait
-  probes:
-  - portrait
-  - lighting
-  - composition
-  - style-transfer
-  difficulty: hard
-  source_prompt: 'A young man sitting cross-legged on the floor in a futuristic mirrored
-    corridor with vertical light strips Subject: A serious-looking young man wearing
-    a white baseball cap backward and looking directly at the camera, clean-shaven
-    face with short dark hair. Clothing: Bright red zip-up hoodie over a plain white
-    crew-neck t-shirt, black ripped jeans with large tears on both knees, black sneakers
-    with thick soles, and a simple beaded bracelet on his left wrist. Environment:
-    An endless mirrored hallway reflecting the subject multiple times in diminishing
-    perspective; walls lined with tall vertical LED light bars emitting cool bright
-    illumination, polished reflective floor creating mirror images of feet and lower
-    legs. Lighting: Cool-toned ambient lighting from overhead fluorescent tubes reflected
-    through mirrors, high-contrast reflections enhancing depth perception along corridor
-    length, soft shadows under seated figure emphasizing grounded presence within
-    space. Camera: Eye-level shot with symmetrical composition centered on subject''s
-    face, slight wide-angle distortion visible at edges accentuating infinite tunnel
-    effect created by mirror repetition and converging perspective lines drawing viewer
-    gaze toward center of frame.'
+  source_prompt: sexy cute brunette woman, arcane style, arcanestyle, leagueofstyle,
+    hand painted textures, stylized, centered, looking at viewer, beautiful eyes,
+    Intricate rendering, meticulously hand painted texture, deep and vibrant scene,
+    sophisticated color palette, saturated hues, stylized lighting, moody atmospheric
+    effect, stylized, mix between 2D and 3D, expressive character design, exaggerated
+    features, emotive expressions, fluid motion, kinetic energy, hand-painted effects,
+    dynamic camera angle, dynamic movements, lighting and shadow for dramatic effect,
+    strong contrast, rich painterly quality, interplay of light and dark, illusion
+    of 3D, Distinctive look that is both western and anime inspired, lush, immersive,
+    traditional painting crossed with digital animation, grounded and fantastical,
+    fusion of 2D and 3D, painterly quality, rich in texture, depth, chiaroscuro effect,
+    exaggerated and expressive facial features, emotive eyes, visually striking color,
+    vibrant colors against muted tones, dynamic brushwork, movement and energy, flowing
+    hair, subtle textures

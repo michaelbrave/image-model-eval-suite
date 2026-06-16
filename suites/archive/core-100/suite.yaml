@@ -1,9 +1,8 @@
 id: core-100
-version: 2
+version: 1
 name: Core 100 Model Evaluation Suite
-description: 100 curated prompts for model evaluation, selected from user preference
-  labeling. 76 from original core-100 (minus both_bad and both_good duplicates), 24
-  from inbox-candidates for diversity.
+description: 100 CSV-sourced prompts translated into 6 equivalent prompt styles with
+  4 seed variants each.
 case_policy:
   cases_file: cases.jsonl
   seed_variants: 4

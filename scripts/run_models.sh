@@ -8,6 +8,8 @@ OUT_ROOT="$ROOT_DIR/outputs"
 COMFY_URL="http://127.0.0.1:8188"
 PYTHON_BIN="python3"
 STEPS="20"
+SMOKE_STEPS="4"
+STEP_SWEEP="4,6,8,10,12,16,20,24,30"
 CFG="7"
 SAMPLER="euler"
 SCHEDULER="normal"
@@ -31,9 +33,10 @@ Default behavior tests only the next untested model and exits. Use --overnight
 to run all untested models sequentially.
 
 Stages (--stage):
+  calibrate   Run smoke + single-prompt step sweep and write calibration.json
   full        Run generation + scoring + card (default)
   style-find  Run style preference test (5 concepts x 6 styles, 1 seed each)
-  both        Run style-find first, then full evaluation with winning style
+  both        Run calibration, then style-find, then full evaluation with winning style
 
 Options:
   --overnight                 Run every untested model, one after another.
@@ -42,7 +45,9 @@ Options:
   --out-root PATH             Output root. Default: outputs/
   --comfy-url URL             ComfyUI URL. Default: http://127.0.0.1:8188
   --python PATH               Python executable. Default: python3
-  --steps N                   Sampling steps. Default: 20
+  --steps N                   Sampling steps if no calibration result is used. Default: 20
+  --smoke-steps N             Low-step calibration smoke image. Default: 4
+  --step-sweep LIST           Comma-separated calibration steps. Default: 4,6,8,10,12,16,20,24,30
   --cfg N                     CFG scale. Default: 7
   --sampler NAME              Sampler. Default: euler
   --scheduler NAME            Scheduler. Default: normal
@@ -52,13 +57,14 @@ Options:
   --scorer NAME               Scorer to run after generation. Default: brightness-contrast
   --style STYLE               Preferred prompt style for full run (e.g. everyday-speech).
                               If not set but preferred_style.json exists, uses that.
-  --stage STAGE               Workflow stage: full, style-find, or both (default: full)
+  --stage STAGE               Workflow stage: calibrate, full, style-find, or both (default: full)
   --dry-run                   Print models that would run, without generating.
   -h, --help                  Show this help.
 
 Examples:
   scripts/run_models.sh --resolution-scale 0.5 --case-limit 3
   scripts/run_models.sh --overnight --resolution-scale 0.5
+  scripts/run_models.sh --stage calibrate --resolution-scale 0.5
   scripts/run_models.sh --stage style-find --resolution-scale 0.5
   scripts/run_models.sh --stage both --resolution-scale 0.5
 USAGE
@@ -92,6 +98,14 @@ while [[ $# -gt 0 ]]; do
       ;;
     --steps)
       STEPS="$2"
+      shift 2
+      ;;
+    --smoke-steps)
+      SMOKE_STEPS="$2"
+      shift 2
+      ;;
+    --step-sweep)
+      STEP_SWEEP="$2"
       shift 2
       ;;
     --cfg)
@@ -157,8 +171,8 @@ if [[ ! -d "$MODELS_DIR" ]]; then
 fi
 
 case "$STAGE" in
-  full|style-find|both) ;;
-  *) echo "Unknown stage: $STAGE (use full, style-find, or both)" >&2; exit 2 ;;
+  calibrate|full|style-find|both) ;;
+  *) echo "Unknown stage: $STAGE (use calibrate, full, style-find, or both)" >&2; exit 2 ;;
 esac
 
 suite_id="$($PYTHON_BIN - <<'PY' "$SUITE"
@@ -240,6 +254,50 @@ if [[ "$DRY_RUN" -eq 1 ]]; then
   done
   exit 0
 fi
+
+run_calibration() {
+  local checkpoint="$1"
+  local model_id="$2"
+  local calibration_dir="$3"
+
+  echo "=== Stage 0: Calibration ==="
+  echo "Model: $model_id"
+  echo "Checkpoint: $checkpoint"
+  mkdir -p "$calibration_dir"
+
+  local calibration_cmd=(
+    $CLI calibrate-comfy "$SUITE"
+    --model-id "$model_id"
+    --checkpoint "$checkpoint"
+    --comfy-url "$COMFY_URL"
+    --out "$calibration_dir"
+    --smoke-steps "$SMOKE_STEPS"
+    --step-sweep "$STEP_SWEEP"
+    --cfg "$CFG"
+    --sampler "$SAMPLER"
+    --scheduler "$SCHEDULER"
+    --timeout "$TIMEOUT"
+    --resolution-scale "$RESOLUTION_SCALE"
+  )
+
+  env $CLIENV "${calibration_cmd[@]}"
+}
+
+recommended_steps_from_calibration() {
+  local calibration_file="$1"
+  if [[ -f "$calibration_file" ]]; then
+    "$PYTHON_BIN" -c "
+import json, sys
+try:
+    d = json.load(open(sys.argv[1]))
+    rec = d.get('recommendation', {})
+    value = rec.get('recommended_steps')
+    print(value if value is not None else '')
+except Exception:
+    print('')
+" "$calibration_file"
+  fi
+}
 
 run_style_find() {
   local checkpoint="$1"
@@ -334,14 +392,20 @@ run_one() {
   local checkpoint="$1"
   local model_id
   local out_dir
+  local calibration_dir
   model_id="$(sanitize_model_id "$(basename "$checkpoint")")"
   out_dir="$OUT_ROOT/$model_id/$suite_id"
+  calibration_dir="$OUT_ROOT/$model_id/calibration"
 
   echo "================================================"
   echo " Model: $model_id"
   echo "================================================"
 
   case "$STAGE" in
+    calibrate)
+      run_calibration "$checkpoint" "$model_id" "$calibration_dir"
+      echo "Recommended steps: $(recommended_steps_from_calibration "$calibration_dir/calibration.json")"
+      ;;
     style-find)
       run_style_find "$checkpoint" "$model_id" "$out_dir"
       echo "Style preference result: $(preferred_style_from_file "$out_dir/preferred_style.json")"
@@ -357,6 +421,13 @@ run_one() {
       run_full_eval "$checkpoint" "$model_id" "$out_dir" "$style"
       ;;
     both)
+      run_calibration "$checkpoint" "$model_id" "$calibration_dir"
+      local calibrated_steps
+      calibrated_steps="$(recommended_steps_from_calibration "$calibration_dir/calibration.json")"
+      if [[ -n "$calibrated_steps" ]]; then
+        echo "Using calibrated steps: $calibrated_steps"
+        STEPS="$calibrated_steps"
+      fi
       run_style_find "$checkpoint" "$model_id" "$out_dir"
       local style
       style="$("$PYTHON_BIN" -c "import json,sys; d=json.load(open(sys.argv[1])); print(list(d.get('winners',{}).values())[0] if d.get('winners') else '')" "$out_dir/preferred_style.json")"

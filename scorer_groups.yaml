@@ -1,8 +1,9 @@
 groups:
   routed-default:
-    description: Domain-routed scorer set for core model characterization.
+    description: Domain-routed scorer set for core model characterization. DINOv3 aesthetic V1 is the current generalist aesthetic scorer.
     always:
       - brightness-contrast
+      - dinov3-aesthetic-v1
     prompt_style_fit:
       - image-reward
     prompt_adherence:
@@ -17,7 +18,6 @@ groups:
           domain: illustration_painting
         scorers:
           - aesthetics-scorer
-          - improved-aesthetic-predictor
       - match:
           probes_any:
             - painting
@@ -25,13 +25,11 @@ groups:
             - ink
             - storybook
         scorers:
-          - improved-aesthetic-predictor
           - aesthetics-scorer
       - match:
           subject: portrait
         scorers:
           - sd-chad
-          - improved-aesthetic-predictor
       - match:
           probes_any:
             - face
@@ -43,13 +41,4 @@ groups:
       - match:
           domain: photography
         scorers:
-          - improved-aesthetic-predictor
           - sd-chad
-      - match:
-          domain: cgi_render
-        scorers:
-          - improved-aesthetic-predictor
-      - match:
-          domain: mixed_general
-        scorers:
-          - improved-aesthetic-predictor

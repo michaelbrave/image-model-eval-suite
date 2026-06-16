@@ -7,7 +7,17 @@ from collections import defaultdict
 from pathlib import Path
 from typing import Any
 
-from .comfyui import ComfyUIClient, build_basic_workflow, first_image_ref
+from .comfyui import (
+    ComfyUIClient,
+    build_basic_workflow,
+    build_z_image_turbo_workflow,
+    build_pixeldit_workflow,
+    build_qwen_image_workflow,
+    build_lumina2_workflow,
+    first_image_ref,
+    get_model_params,
+    WORKFLOW_BUILDERS,
+)
 from .report import write_card
 from .routing import load_scorer_groups, scorers_for_case
 from .scorers import load_run, make_scorer, write_run
@@ -45,6 +55,12 @@ def _scaled_dimension(value: int, scale: float) -> int:
     return scaled
 
 
+def _resolve_negative(args: argparse.Namespace, case) -> str:
+    if args.negative_prompt:
+        return args.negative_prompt
+    return case.negative_prompt
+
+
 def _generate_cases(
     suite,
     cases,
@@ -56,23 +72,94 @@ def _generate_cases(
     images_dir.mkdir(parents=True, exist_ok=True)
     client = ComfyUIClient(args.comfy_url)
 
+    workflow_builder = WORKFLOW_BUILDERS.get(args.workflow_type, build_basic_workflow)
+    model_params = get_model_params(args.workflow_type)
+
     for index, case in enumerate(cases, start=1):
         width = _scaled_dimension(case.width, args.resolution_scale)
         height = _scaled_dimension(case.height, args.resolution_scale)
         prefix = f"{args.model_id}_{suite.suite_id}_{case.case_id}"
-        workflow = build_basic_workflow(
-            checkpoint=args.checkpoint,
-            positive=case.positive_prompt,
-            negative=case.negative_prompt,
-            seed=case.image_seed,
-            width=width,
-            height=height,
-            steps=args.steps,
-            cfg=args.cfg,
-            sampler=args.sampler,
-            scheduler=args.scheduler,
-            filename_prefix=prefix,
-        )
+        negative = _resolve_negative(args, case)
+
+        if args.workflow_type == "checkpoint":
+            workflow = workflow_builder(
+                checkpoint=args.checkpoint,
+                positive=case.positive_prompt,
+                negative=negative,
+                seed=case.image_seed,
+                width=width,
+                height=height,
+                steps=args.steps,
+                cfg=args.cfg,
+                sampler=args.sampler,
+                scheduler=args.scheduler,
+                filename_prefix=prefix,
+            )
+        elif args.workflow_type == "z-image-turbo":
+            workflow = build_z_image_turbo_workflow(
+                unet_name=model_params["unet_name"],
+                clip_name=model_params["clip_name"],
+                vae_name=model_params["vae_name"],
+                positive=case.positive_prompt,
+                seed=case.image_seed,
+                width=width,
+                height=height,
+                steps=args.steps,
+                cfg=args.cfg,
+                sampler=args.sampler,
+                scheduler=args.scheduler,
+                filename_prefix=prefix,
+            )
+        elif args.workflow_type == "pixeldit":
+            workflow = build_pixeldit_workflow(
+                unet_name=model_params["unet_name"],
+                clip_name=model_params["clip_name"],
+                vae_name=model_params["vae_name"],
+                positive=case.positive_prompt,
+                negative=negative,
+                seed=case.image_seed,
+                width=width,
+                height=height,
+                steps=args.steps,
+                cfg=args.cfg,
+                sampler=args.sampler,
+                scheduler=args.scheduler,
+                filename_prefix=prefix,
+            )
+        elif args.workflow_type == "qwen-image":
+            workflow = build_qwen_image_workflow(
+                unet_name=model_params["unet_name"],
+                clip_name=model_params["clip_name"],
+                vae_name=model_params["vae_name"],
+                positive=case.positive_prompt,
+                negative=negative,
+                seed=case.image_seed,
+                width=width,
+                height=height,
+                steps=args.steps,
+                cfg=args.cfg,
+                sampler=args.sampler,
+                scheduler=args.scheduler,
+                filename_prefix=prefix,
+            )
+        elif args.workflow_type == "lumina2":
+            workflow = build_lumina2_workflow(
+                unet_name=model_params["unet_name"],
+                clip_name=model_params["clip_name"],
+                vae_name=model_params["vae_name"],
+                positive=case.positive_prompt,
+                negative=negative,
+                seed=case.image_seed,
+                width=width,
+                height=height,
+                steps=args.steps,
+                cfg=args.cfg,
+                sampler=args.sampler,
+                scheduler=args.scheduler,
+                filename_prefix=prefix,
+            )
+        else:
+            raise ValueError(f"Unknown workflow_type: {args.workflow_type}")
         record = case.to_json()
         record["generated_width"] = width
         record["generated_height"] = height
@@ -107,6 +194,10 @@ def _cmd_run_comfy(args: argparse.Namespace) -> None:
     suite = load_suite(args.suite)
     cases = expand_cases(suite)
 
+    if args.negative_prompt_file:
+        args.negative_prompt = Path(args.negative_prompt_file).read_text(encoding="utf-8").strip()
+        args.negative_prompt_file = None  # resolved, don't confuse _generate_cases
+
     if args.style:
         style_ids = [s.strip() for s in args.style.split(",")]
         cases = expand_cases_for_styles(suite, style_ids)
@@ -135,11 +226,211 @@ def _cmd_run_comfy(args: argparse.Namespace) -> None:
             "resolution_scale": args.resolution_scale,
             "style": args.style,
             "sample_concepts": args.sample_concepts,
+            "workflow_type": args.workflow_type,
+            "negative_prompt": args.negative_prompt,
         },
         "cases": [],
     }
     _generate_cases(suite, cases, args, out_dir, run)
 
+
+def _parse_step_sweep(value: str) -> list[int]:
+    steps: list[int] = []
+    for item in value.split(","):
+        item = item.strip()
+        if not item:
+            continue
+        step = int(item)
+        if step <= 0:
+            raise ValueError("step sweep values must be positive integers")
+        steps.append(step)
+    if not steps:
+        raise ValueError("step sweep must contain at least one step value")
+    return sorted(set(steps))
+
+
+def _select_calibration_case(suite, args: argparse.Namespace):
+    cases = expand_cases(suite)
+    if args.style:
+        style_cases = [case for case in cases if case.style_id == args.style]
+        if style_cases:
+            cases = style_cases
+    variant_cases = [case for case in cases if case.variant == args.variant]
+    if variant_cases:
+        cases = variant_cases
+    if args.case_id:
+        matches = [case for case in cases if case.case_id == args.case_id]
+        if not matches:
+            raise ValueError(f"Calibration case not found: {args.case_id}")
+        return matches[0]
+    if not cases:
+        raise ValueError("Suite has no cases available for calibration")
+    return sorted(cases, key=lambda case: case.case_id)[0]
+
+
+def _score_calibration_record(record: dict[str, Any], scorer_names: list[str], args: argparse.Namespace) -> list[dict[str, str]]:
+    failures: list[dict[str, str]] = []
+    if record.get("status") != "completed" or not record.get("image_path"):
+        return failures
+    image_path = Path(record["image_path"])
+    record.setdefault("scores", [])
+    existing = {score.get("scorer_name") for score in record["scores"]}
+    for name in scorer_names:
+        if name in existing:
+            continue
+        try:
+            scorer = make_scorer(name, weight_path=args.weight_path)
+            result = scorer.score(
+                image_path,
+                prompt=record.get("positive_prompt"),
+                style_hint=record.get("style_id"),
+            )
+            record["scores"].append(result.to_json())
+        except Exception as exc:  # noqa: BLE001 - calibration should preserve scorer failures
+            failures.append({"case_id": record.get("case_id", ""), "scorer": name, "error": str(exc)})
+    return failures
+
+
+def _record_score(record: dict[str, Any], score_kind: str = "aesthetic") -> float | None:
+    values: list[float] = []
+    for score in record.get("scores", []):
+        if score.get("score_kind") != score_kind:
+            continue
+        value = score.get("normalized_score")
+        if isinstance(value, (int, float)):
+            values.append(float(value))
+    if not values:
+        return None
+    return sum(values) / len(values)
+
+
+def _recommend_steps(records: list[dict[str, Any]], plateau_delta: float, step_sweep: list[int] | None = None) -> dict[str, Any]:
+    scored: list[tuple[int, float]] = []
+    allowed_steps = set(step_sweep) if step_sweep is not None else None
+    for record in records:
+        if record.get("calibration_stage") not in {"load-smoke", "step-sweep"}:
+            continue
+        step = record.get("generation", {}).get("steps")
+        if allowed_steps is not None and step not in allowed_steps:
+            continue
+        score = _record_score(record, "aesthetic")
+        if isinstance(step, int) and score is not None:
+            scored.append((step, score))
+    if not scored:
+        return {"recommended_steps": None, "reason": "no aesthetic scores available"}
+
+    best_step, best_score = max(scored, key=lambda item: item[1])
+    threshold = best_score - plateau_delta
+    recommended_step = min(step for step, score in scored if score >= threshold)
+    return {
+        "recommended_steps": recommended_step,
+        "best_steps": best_step,
+        "best_score": best_score,
+        "plateau_delta": plateau_delta,
+        "step_scores": {str(step): score for step, score in sorted(scored)},
+        "reason": "earliest step within plateau_delta of best aesthetic score",
+    }
+
+
+def _cmd_calibrate_comfy(args: argparse.Namespace) -> None:
+    suite = load_suite(args.suite)
+    case = _select_calibration_case(suite, args)
+    out_dir = Path(args.out)
+    images_dir = out_dir / "images"
+    images_dir.mkdir(parents=True, exist_ok=True)
+    client = ComfyUIClient(args.comfy_url)
+    scorer_names = args.scorer or ["dinov3-aesthetic-v1"]
+    step_sweep = _parse_step_sweep(args.step_sweep)
+
+    width = _scaled_dimension(case.width, args.resolution_scale)
+    height = _scaled_dimension(case.height, args.resolution_scale)
+    records: list[dict[str, Any]] = []
+    failures: list[dict[str, str]] = []
+
+    planned = [("load-smoke", args.smoke_steps)]
+    planned.extend(("step-sweep", step) for step in step_sweep if step != args.smoke_steps)
+
+    for index, (stage, steps) in enumerate(planned, start=1):
+        record = case.to_json()
+        record["status"] = "queued"
+        record["calibration_stage"] = stage
+        record["generated_width"] = width
+        record["generated_height"] = height
+        record["generation"] = {
+            "steps": steps,
+            "cfg": args.cfg,
+            "sampler": args.sampler,
+            "scheduler": args.scheduler,
+            "resolution_scale": args.resolution_scale,
+        }
+        prefix = f"{args.model_id}_calibration_{stage}_{steps}_{case.case_id}"
+        workflow = build_basic_workflow(
+            checkpoint=args.checkpoint,
+            positive=case.positive_prompt,
+            negative=case.negative_prompt if not args.no_negative else "",
+            seed=case.image_seed,
+            width=width,
+            height=height,
+            steps=steps,
+            cfg=args.cfg,
+            sampler=args.sampler,
+            scheduler=args.scheduler,
+            filename_prefix=prefix,
+        )
+        try:
+            queued = client.queue_prompt(workflow)
+            prompt_id = queued.get("prompt_id")
+            if not prompt_id:
+                raise RuntimeError(f"ComfyUI response missing prompt_id: {queued}")
+            history = client.wait_for_history(prompt_id, timeout_seconds=args.timeout)
+            image_ref = first_image_ref(history)
+            if image_ref is None:
+                raise RuntimeError("ComfyUI history did not include an image")
+            image_bytes = client.download_image(
+                filename=image_ref["filename"],
+                subfolder=image_ref.get("subfolder", ""),
+                folder_type=image_ref.get("type", "output"),
+            )
+            image_path = images_dir / f"{stage}-{steps}-{case.case_id}.png"
+            image_path.write_bytes(image_bytes)
+            record.update({
+                "status": "completed",
+                "image_path": str(image_path),
+                "comfyui": {"prompt_id": prompt_id, "image_ref": image_ref},
+            })
+        except Exception as exc:  # noqa: BLE001 - preserve per-calibration failures
+            record.update({"status": "failed", "error": str(exc)})
+
+        failures.extend(_score_calibration_record(record, scorer_names, args))
+        records.append(record)
+        print(json.dumps({"case": index, "stage": stage, "steps": steps, "status": record["status"]}))
+
+    recommendation = _recommend_steps(records, args.plateau_delta, step_sweep)
+    calibration = {
+        "suite_id": suite.suite_id,
+        "suite_version": suite.version,
+        "model": {"model_id": args.model_id, "checkpoint": args.checkpoint},
+        "calibration": {
+            "case_id": case.case_id,
+            "style_id": case.style_id,
+            "variant": case.variant,
+            "scorers": scorer_names,
+            "smoke_steps": args.smoke_steps,
+            "step_sweep": step_sweep,
+            "negative_prompt_policy": "disabled" if args.no_negative else "suite-negative",
+            "recommendation": recommendation,
+            "failures": failures,
+        },
+        "cases": records,
+    }
+    write_run(out_dir / "run.json", calibration)
+    (out_dir / "calibration.json").write_text(json.dumps(calibration["calibration"], indent=2, sort_keys=True), encoding="utf-8")
+    print(json.dumps({
+        "run": str(out_dir / "run.json"),
+        "calibration": str(out_dir / "calibration.json"),
+        "recommended_steps": recommendation.get("recommended_steps"),
+        "failures": len(failures),
+    }, indent=2))
 
 def _scorer_names_for_case(args: argparse.Namespace, case: dict[str, Any], group: dict[str, Any] | None) -> list[str]:
     names: list[str] = []
@@ -206,6 +497,11 @@ def _cmd_build_card(args: argparse.Namespace) -> None:
 
 def _cmd_style_find(args: argparse.Namespace) -> None:
     suite = load_suite(args.suite)
+
+    if args.negative_prompt_file:
+        args.negative_prompt = Path(args.negative_prompt_file).read_text(encoding="utf-8").strip()
+        args.negative_prompt_file = None
+
     concept_ids = sorted(set(c.concept_id for c in suite.cases))
     random.seed(args.seed)
     random.shuffle(concept_ids)
@@ -232,6 +528,8 @@ def _cmd_style_find(args: argparse.Namespace) -> None:
             "resolution_scale": args.resolution_scale,
             "stage": "style-find",
             "sample_concepts": args.sample_concepts,
+            "workflow_type": args.workflow_type,
+            "negative_prompt": args.negative_prompt,
         },
         "cases": [],
     }
@@ -247,7 +545,7 @@ def _cmd_style_find(args: argparse.Namespace) -> None:
         if group:
             scorer_names = list(group.get("always", []))
     if not scorer_names:
-        scorer_names = ["brightness-contrast", "improved-aesthetic-predictor"]
+        scorer_names = ["brightness-contrast", "dinov3-aesthetic-v1"]
 
     run = load_run(out_dir / "run.json")
     scorer_cache: dict[str, Any] = {}
@@ -320,14 +618,40 @@ def build_parser() -> argparse.ArgumentParser:
     run.add_argument("--resolution-scale", type=float, default=1.0, help="Scale suite dimensions, e.g. 0.5 for SD1.5")
     run.add_argument("--style", default=None, help="Comma-separated style IDs to filter (e.g. 'everyday-speech,comma-separated')")
     run.add_argument("--sample-concepts", type=int, default=None, help="Random sample N concepts from the suite")
+    run.add_argument("--negative-prompt", default=None, help="Global negative prompt override applied to all cases")
+    run.add_argument("--negative-prompt-file", default=None, help="Read global negative prompt from file")
+    run.add_argument("--workflow-type", default="checkpoint", choices=["checkpoint", "z-image-turbo", "pixeldit", "qwen-image", "lumina2"], help="Workflow template to use")
     run.set_defaults(func=_cmd_run_comfy)
+
+    calibrate = sub.add_parser("calibrate-comfy", help="Run a cheap smoke + step-sweep calibration through ComfyUI")
+    calibrate.add_argument("suite")
+    calibrate.add_argument("--model-id", required=True)
+    calibrate.add_argument("--checkpoint", required=True)
+    calibrate.add_argument("--comfy-url", default="http://127.0.0.1:8188")
+    calibrate.add_argument("--out", required=True)
+    calibrate.add_argument("--smoke-steps", type=int, default=4, help="Low-step smoke image before the sweep")
+    calibrate.add_argument("--step-sweep", default="4,6,8,10,12,16,20,24,30", help="Comma-separated step values to test")
+    calibrate.add_argument("--cfg", type=float, default=7.0)
+    calibrate.add_argument("--sampler", default="euler")
+    calibrate.add_argument("--scheduler", default="normal")
+    calibrate.add_argument("--timeout", type=int, default=600)
+    calibrate.add_argument("--resolution-scale", type=float, default=1.0, help="Scale suite dimensions, e.g. 0.5 for SD1.5")
+    calibrate.add_argument("--style", default=None, help="Preferred style id for the calibration prompt")
+    calibrate.add_argument("--variant", type=int, default=0, help="Prompt variant to calibrate with")
+    calibrate.add_argument("--case-id", default=None, help="Specific suite case_id to calibrate with")
+    calibrate.add_argument("--scorer", action="append", default=[], help="Scorer(s) to evaluate (default: dinov3-aesthetic-v1)")
+    calibrate.add_argument("--weight-path", default=None, help="Override scorer weights/checkpoint where supported")
+    calibrate.add_argument("--plateau-delta", type=float, default=0.02, help="Pick earliest step within this normalized aesthetic delta of best")
+    calibrate.add_argument("--no-negative", action="store_true", help="Disable suite negative prompt during calibration")
+    calibrate.add_argument("--workflow-type", default="checkpoint", choices=["checkpoint", "z-image-turbo", "pixeldit", "qwen-image", "lumina2"], help="Workflow template to use")
+    calibrate.set_defaults(func=_cmd_calibrate_comfy)
 
     score = sub.add_parser("score-run", help="Score completed images in a run JSON")
     score.add_argument("run_json")
     score.add_argument("--scorer", action="append", default=[])
     score.add_argument("--scorer-group", default=None, help="Named scorer group from scorer_groups.yaml")
     score.add_argument("--scorer-groups-file", default="scorer_groups.yaml")
-    score.add_argument("--weight-path", default=None, help="Override weights for improved-aesthetic-predictor")
+    score.add_argument("--weight-path", default=None, help="Override scorer weights/checkpoint where supported")
     score.add_argument("--rescore", action="store_true")
     score.add_argument("--keep-going", action="store_true", help="Record scorer failures and continue")
     score.set_defaults(func=_cmd_score_run)
@@ -352,10 +676,13 @@ def build_parser() -> argparse.ArgumentParser:
     style_find.add_argument("--resolution-scale", type=float, default=1.0, help="Scale suite dimensions, e.g. 0.5 for SD1.5")
     style_find.add_argument("--sample-concepts", type=int, default=5, help="Number of concepts to test (each run with all 6 styles)")
     style_find.add_argument("--seed", type=int, default=0, help="Random seed for concept sampling")
-    style_find.add_argument("--scorer", action="append", default=[], help="Scorer(s) to evaluate (default: brightness-contrast + improved-aesthetic-predictor)")
+    style_find.add_argument("--scorer", action="append", default=[], help="Scorer(s) to evaluate (default: brightness-contrast + dinov3-aesthetic-v1)")
     style_find.add_argument("--scorer-group", default="routed-default", help="Scorer group from scorer_groups.yaml")
     style_find.add_argument("--scorer-groups-file", default="scorer_groups.yaml")
     style_find.add_argument("--weight-path", default=None)
+    style_find.add_argument("--negative-prompt", default=None, help="Global negative prompt override applied to all cases")
+    style_find.add_argument("--negative-prompt-file", default=None, help="Read global negative prompt from file")
+    style_find.add_argument("--workflow-type", default="checkpoint", choices=["checkpoint", "z-image-turbo", "pixeldit", "qwen-image", "lumina2"], help="Workflow template to use")
     style_find.set_defaults(func=_cmd_style_find)
 
     return parser
